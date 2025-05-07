@@ -95,15 +95,8 @@ fn main() -> std::io::Result<()> {
 	
 	println!("Dirent name: {}", directory::dirent_deserialize(data, 0).name.iter().collect::<String>());
 	
-	let ins:usize = 5 * 4096;	// get_root_start();
-	
-	let mut data: [u8; 4] = [0; 4];// = &mmap[ins..ins+4];
-	for i in 3..=0 {
-		data[i] = mmap[ins+i..ins+i+1][0];
-	}
-	
-	let refs: u32 = u32::from_ne_bytes(data);
-	println!("refs = {}", refs);
+	let data = &mmap;
+	println!("refs = {}", inode::inode_deserialize(data, 0).refs);
 	
 	//let data = &mmap[ins+offset+51..ins+offset+52];
 	//let active = data[0] != 0;

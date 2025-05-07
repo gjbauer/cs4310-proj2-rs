@@ -27,7 +27,6 @@ pub fn inode_deserialize(mmap: &memmap2::Mmap, num: usize) -> Inode {
 	}
 	
 	let refs: u32 = u32::from_ne_bytes(data);
-	println!("refs = {}", refs);
 	
 	for i in 3..=0 {
 		data[i] = mmap[ins+offset+4+i..ins+offset+4+i+1][0];
