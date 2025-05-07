@@ -9,15 +9,15 @@ LDLIBS :=
 nufs: $(OBJS)
 	cargo run
 
-mkfs:
-	cd mkfs && make mkfs
-
 %.o: %.c $(HDRS)
 	gcc $(CFLAGS) -c -o $@ $<
 
 clean: unmount
 	rm -f nufs *.o test.log data.nufs mkfs/mkfs
 	rmdir mnt || true
+
+hex:
+	vim data.nufs
 
 #mount: nufs
 #	mkdir -p mnt || true
