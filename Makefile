@@ -34,6 +34,6 @@ test: nufs
 #	gdb --args ./nufs -s -f mnt data.nufs
 
 open:
-	gedit *.c *.h
+	nvim -p src/*.rs
 
 .PHONY: clean mount unmount gdb
