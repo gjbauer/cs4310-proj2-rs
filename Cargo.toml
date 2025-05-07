@@ -4,8 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-abomonation = "0.7.3"
-arrayvec = "0.7.6"
-bincode = "2.0.1"
 fuser = "0.15"
 memmap2 = "0.9.5"
