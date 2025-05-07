@@ -86,6 +86,10 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	
+	let (head, body, _tail) = unsafe { &mmap[start+72..start+72+72].align_to::<directory::Dirent>() }; // /hello.txt
+	assert!(head.is_empty(), "Data was not aligned");
+	let data: directory::Dirent = body[0];
+	
 
 	// Get the mount point from the command line arguments
 	//let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
