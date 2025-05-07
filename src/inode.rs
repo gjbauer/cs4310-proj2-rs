@@ -9,12 +9,6 @@ pub struct Inode {
 	pub inum: u32,
 }
 
-// TODO: Implement this function...
-/*fn get_inode(inum: u32) -> Inode
-{
-	return;
-}*/
-
 // TODO: Implement inode_deserialize...
 pub fn inode_deserialize(mmap: &memmap2::Mmap, num: usize) -> Inode {
 	let ins: usize = 5 * 4096;	// get_root_start();
