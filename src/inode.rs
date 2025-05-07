@@ -16,7 +16,7 @@ pub struct Inode {
 }*/
 
 // TODO: Implement inode_deserialize...
-fn inode_deserialize(mmap: &memmap2::Mmap, num: usize) -> (Inode, &memmap2::Mmap) {
+pub fn inode_deserialize(mmap: &memmap2::Mmap, num: usize) -> (Inode, &memmap2::Mmap) {
 	let ins: usize = 5 * 4096;	// get_root_start();
 	let offset: usize = num * std::mem::size_of::<Inode>();
 	
