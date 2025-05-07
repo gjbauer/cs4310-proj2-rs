@@ -1,6 +1,6 @@
 const DIR_NAME: usize = 48;
 
-struct Dirent {
+pub struct Dirent {
 	name: [char; DIR_NAME],
 	inum: u16,
 }

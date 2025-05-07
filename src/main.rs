@@ -1,61 +1,92 @@
-//use fuse::{Filesystem, Mount};
-//use std::path::Path;
-//use std::str;
+use std::collections::HashMap;
+use fuser::{Filesystem, MountOption, Request, Session, ReplyAttr, ReplyData, ReplyDirectory, FileAttr, FileType};
+use std::env;
 use memmap2::Mmap;
 use std::fs::File;
 //use std::fs::FileType;
+use std::path::Path;
+//use std::error::Error;
+//use fuser::Error;
+mod directory;
 
-/*struct SimpleFilesystem;
+struct SimpleFilesystem {
+	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
+	//root_dir: HashMap<Path, directory::Dirent>,
+	// Add other necessary fields for your filesystem implementation
+}
+
+type SFS = SimpleFilesystem;
 
 impl Filesystem for SimpleFilesystem {
-    fn stat(&mut self, _path: &Path, _ctx: fuse::Context) -> Result<fuse::StatResult, fuse::Error> {
-        // Return information about the root directory
-        Ok(fuse::StatResult {
-            st_size: 0, // Size of the root directory
-            st_mode: 0o777 | fuse::FileType::Directory, // Permissions and type (directory)
-            st_nlink: 1, // Number of links
-            st_uid: 0,    // User ID
-            st_gid: 0,    // Group ID
-            st_atim: None, // Access time
-            st_mtim: None, // Modification time
-            st_ctim: None, // Creation time
-        })
-    }
+	/*fn init(&mut self, _session: &mut Session) -> Result<()> {
+		// Perform any initialization tasks here
+		Ok(())
+	}*/
 
-    fn getattr(&mut self, path: &Path, _ctx: fuse::Context) -> Result<fuse::StatResult, fuse::Error> {
-        match path.as_os_string().into_string() {
-            // Return stat information for the root directory
-            Ok(ref p) if p == "." => {
-                self.stat(&mut self, &Path::new(p), _ctx);
-            }
-            _ => {
-                println!("Unknown file: {:?}", path);
-            }
-        }
-    }
-}*/
+	fn getattr(&mut self, _req: &Request, ino: u64, _fh: Option<u64>, reply: ReplyAttr) {
+		// Get the attributes of a file or directory
+		/*if let Some(attr) = self.root_dir.get(path) {
+			return Ok(attr.file_attr.clone());
+		}
+
+		Err(Error::ENOENT) // Not found*/
+	}
+
+	fn readdir(&mut self, _req: &Request, ino: u64, _fh: u64, offset: i64, mut reply: ReplyDirectory) {
+		// List the contents of a directory
+		//if  == Path::new("/") {	// _path.as_ref() <- old
+			let mut entries: Vec<directory::Dirent> = Vec::new();
+			// Example: Add the root directory entry
+			//entries.push((Path::new("/"), self.root_dir[&Path::new("/")].clone()));
+			// Add other entries as needed
+			return ();
+		//}
+		//Ok(-1) // Not found
+	}
+
+	// Implement other necessary FUSE operations like read, write, etc.
+	// Example: Implement read
+	fn read(&mut self, _req: &Request, ino: u64, _fh: u64, offset: i64, _size: u32, _flags: i32, _lock: Option<u64>, reply: ReplyData) {
+		// Implementation for reading file data
+		/*if let Some(attr) = self.root_dir.get(path) {
+			if attr.file_attr.file_type == FileType::File {
+				// Replace this with your actual file read logic
+				Ok(b"Hello, world!".to_vec())
+			} else {
+				Err(Error::ENOTDIR) // Not a file
+			}
+		} else {
+			Err(Error::ENOENT) // Not found
+		}*/
+	}
+}
 
 fn main() -> std::io::Result<()> {
-    // Open the file
-    let file = File::open("data.nufs")?;
+	// Open the file
+	let file = File::open("data.nufs")?;
 
-    // Create a memory map for the file
-    let mmap = unsafe { Mmap::map(&file)? };
+	// Create a memory map for the file
+	let mmap = unsafe { Mmap::map(&file)? };
 
-    // Access file content as a byte slice
-    let content = &mmap[..];
+	// Access file content as a byte slice
+	let content = &mmap[..];
 
-    // Print it to the console
-    println!("File content: {}", String::from_utf8_lossy(content));
+	// Print it to the console
+	println!("File content: {}", String::from_utf8_lossy(content));
 
-    // Get the mount point from the command line arguments
-    //let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
+	// Get the mount point from the command line arguments
+	let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
 
-    // Create a new filesystem instance
-    //let filesystem = SimpleFilesystem;
-
-    // Mount the filesystem
-    //fuse::mount(filesystem, mount_point.as_str(), &[]).unwrap();
-    
-    Ok(())
+	// Create a new filesystem instance
+	//let filesystem = SimpleFilesystem { root_dir: HashMap::new() };
+	let filesystem = SimpleFilesystem {};
+	
+	// Get the mount point from the command line arguments
+	//let mountpoint = env::args_os().nth(1).unwrap();
+	
+	// Mount the filesystem
+	fuser::mount2(filesystem, mount_point, &[MountOption::AutoUnmount]).unwrap();
+	
+	Ok(())
 }
+
