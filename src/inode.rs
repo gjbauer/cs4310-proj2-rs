@@ -1,4 +1,4 @@
-struct Inode {
+pub struct Inode {
 	refs: u32,
 	mode: u32,
 	size: [u16; 2],
@@ -7,10 +7,11 @@ struct Inode {
 	inum: u32,
 }
 
-fn get_inode(inum: u32) -> Inode
+// TODO: Implement this function...
+/*fn get_inode(inum: u32) -> Inode
 {
 	return;
-}
+}*/
 
 //int inode_find(const char *path);
 //int alloc_inode(const char *path);

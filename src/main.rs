@@ -3,19 +3,15 @@ use fuser::{Filesystem, MountOption, Request, Session, ReplyAttr, ReplyData, Rep
 use std::env;
 use memmap2::Mmap;
 use std::fs::File;
-//use std::fs::FileType;
 use std::path::Path;
-//use std::error::Error;
-//use fuser::Error;
 mod directory;
+mod inode;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
 	//root_dir: HashMap<Path, directory::Dirent>,
 	// Add other necessary fields for your filesystem implementation
 }
-
-type SFS = SimpleFilesystem;
 
 impl Filesystem for SimpleFilesystem {
 	/*fn init(&mut self, _session: &mut Session) -> Result<()> {
@@ -80,9 +76,6 @@ fn main() -> std::io::Result<()> {
 	// Create a new filesystem instance
 	//let filesystem = SimpleFilesystem { root_dir: HashMap::new() };
 	let filesystem = SimpleFilesystem {};
-	
-	// Get the mount point from the command line arguments
-	//let mountpoint = env::args_os().nth(1).unwrap();
 	
 	// Mount the filesystem
 	fuser::mount2(filesystem, mount_point, &[MountOption::AutoUnmount]).unwrap();
