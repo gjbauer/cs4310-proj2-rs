@@ -69,6 +69,11 @@ fn main() -> std::io::Result<()> {
 
 	// Print it to the console
 	println!("File content: {}", String::from_utf8_lossy(content));
+	
+	let start:usize = 5 * 4096;
+	
+	let data = &mmap[start..start+1]; // Read the first byte of root
+	println!("First bytes: {}", std::str::from_utf8(data).unwrap());
 
 	// Get the mount point from the command line arguments
 	let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
