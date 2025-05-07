@@ -1,9 +1,9 @@
 //use fuse::{Filesystem, Mount};
-use std::path::Path;
-use std::str;
+//use std::path::Path;
+//use std::str;
 use memmap2::Mmap;
 use std::fs::File;
-use std::fs::FileType;
+//use std::fs::FileType;
 
 /*struct SimpleFilesystem;
 
