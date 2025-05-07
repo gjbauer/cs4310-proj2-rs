@@ -70,20 +70,32 @@ fn main() -> std::io::Result<()> {
 	// Print it to the console
 	println!("File content: {}", String::from_utf8_lossy(content));
 	
-	let start:usize = 5 * 4096;
+	let start:usize = 5 * 4096;	// get_root_start();
 	
 	let data = &mmap[start..start+1]; // Read the first byte of root
-	println!("First bytes: {}", std::str::from_utf8(data).unwrap());
+	if let Ok(_) = std::str::from_utf8(data) {
+		println!("First entry: {}", std::str::from_utf8(data).unwrap());
+	} else {
+		println!("ERROR: No Data!!");
+	}
+	
+	let data = &mmap[start+72..start+10+72]; // /hello.txt
+	if let Ok(_) = std::str::from_utf8(data) {
+		println!("Second entry: {}", std::str::from_utf8(data).unwrap());
+	} else {
+		println!("ERROR: No Data!!");
+	}
+	
 
 	// Get the mount point from the command line arguments
-	let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
+	//let mount_point = std::env::args().nth(1).expect("Usage: <program_name> <mount_point>");
 
 	// Create a new filesystem instance
 	//let filesystem = SimpleFilesystem { root_dir: HashMap::new() };
-	let filesystem = SimpleFilesystem {};
+	//let filesystem = SimpleFilesystem {};
 	
 	// Mount the filesystem
-	fuser::mount2(filesystem, mount_point, &[MountOption::AutoUnmount]).unwrap();
+	//fuser::mount2(filesystem, mount_point, &[MountOption::AutoUnmount]).unwrap();
 	
 	Ok(())
 }
