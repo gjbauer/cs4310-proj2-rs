@@ -1,12 +1,12 @@
 use std::mem::size_of;
 
 pub struct Inode {
-	refs: u32,
-	mode: u32,
-	size: [u16; 2],
-	ptrs: [u16; 2],
-	iptr: u32,
-	inum: u32,
+	pub refs: u32,
+	pub mode: u32,
+	pub size: [u16; 2],
+	pub ptrs: [u16; 2],
+	pub iptr: u32,
+	pub inum: u32,
 }
 
 // TODO: Implement this function...
