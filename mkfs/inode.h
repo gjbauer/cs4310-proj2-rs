@@ -8,12 +8,12 @@
 #include "pages.h"
 
 typedef struct inode {
-    int refs; // reference count
-    int mode; // permission & type
+    int32_t refs; // reference count
+    int32_t mode; // permission & type
     int16_t size[2]; // bytes
     int16_t ptrs[2]; // direct pointers
-    int iptr; // single indirect pointer
-    int inum; // store inum in itself
+    int32_t iptr; // single indirect pointer
+    int32_t inum; // store inum in itself
 } inode;
 
 inode* get_inode(int inum);

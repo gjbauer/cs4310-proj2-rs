@@ -187,6 +187,7 @@ mknod(const char *path, int mode)
 	inode *h = get_inode(tree_lookup(ppath, find_parent(ppath)));
 	inode *n = get_inode(l);
 	n->mode=mode;
+	n->refs = 1;
 	
 	strncpy(e.name, path, DIR_NAME);
 	e.inum = l;

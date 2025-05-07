@@ -6,4 +6,6 @@ int
 mknod(const char *path, int mode);
 int
 mkdir(const char *path, int mode);
+int
+find_parent(const char* path);
 #endif

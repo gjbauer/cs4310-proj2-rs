@@ -7,6 +7,7 @@ use std::path::Path;
 mod directory;
 mod inode;
 use std::mem::size_of;
+use std::mem::transmute;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -87,9 +88,25 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	
+	
 	println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
-	println!("Dirent name: {}", directory::dirent_deserialize(mmap, 0).name.iter().collect::<String>());
+	let data = &mmap;
+	
+	println!("Dirent name: {}", directory::dirent_deserialize(data, 0).0.name.iter().collect::<String>());
+	
+	let ins:usize = 5 * 4096;	// get_root_start();
+	
+	let mut data: [u8; 4] = [0; 4];// = &mmap[ins..ins+4];
+	for i in 3..=0 {
+		data[i] = mmap[ins+i..ins+i+1][0];
+	}
+	
+	let refs: u32 = u32::from_ne_bytes(data);
+	println!("refs = {}", refs);
+	
+	//let data = &mmap[ins+offset+51..ins+offset+52];
+	//let active = data[0] != 0;
 	
 	//let (head, body, _tail) = unsafe { &mmap[start+72..start+72+72].align_to::<directory::Dirent>() }; // /hello.txt
 	//assert!(head.is_empty(), "Data was not aligned");

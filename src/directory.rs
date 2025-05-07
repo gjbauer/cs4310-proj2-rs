@@ -9,24 +9,24 @@ pub struct Dirent {
 }
 
 pub fn create_entry(name: [char; DIR_NAME], inum: u16, active: bool) -> Dirent {
-	return Dirent { name: name, inum: inum, active: active };;
+	return Dirent { name: name, inum: inum, active: active };
 }
 
-pub fn dirent_deserialize(mmap: memmap2::Mmap, offset: usize) -> Dirent {
+pub fn dirent_deserialize(mmap: &memmap2::Mmap, offset: usize) -> (Dirent, &memmap2::Mmap) {
 	let start:usize = 5 * 4096;	// get_root_start();
 	
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
 	
 	for i in 0..=DIR_NAME-1 {
-		let data = &mmap[start+offset+i..start+offset+i+1];
-		name[i] = data[0] as char;
+		let data = mmap[start+offset+i..start+offset+i+1][0];
+		name[i] = data as char;
 	}
 	
-	let data = &mmap[start+offset+49..start+offset+50];
-	let inum = data[0] as u16;
+	let data = mmap[start+offset+49..start+offset+50][0];
+	let inum = data as u16;
 	
-	let data = &mmap[start+offset+51..start+offset+52];
-	let active = data[0] != 0;
+	let data = mmap[start+offset+51..start+offset+52][0];
+	let active = data != 0;
 	
-	return Dirent { name: name, inum: inum, active: active };
+	return ( Dirent { name: name, inum: inum, active: active } , mmap );
 }
