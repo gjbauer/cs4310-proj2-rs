@@ -93,7 +93,7 @@ fn main() -> std::io::Result<()> {
 	
 	let data = &mmap;
 	
-	println!("Dirent name: {}", directory::dirent_deserialize(data, 0).0.name.iter().collect::<String>());
+	println!("Dirent name: {}", directory::dirent_deserialize(data, 0).name.iter().collect::<String>());
 	
 	let ins:usize = 5 * 4096;	// get_root_start();
 	
