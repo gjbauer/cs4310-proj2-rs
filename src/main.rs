@@ -6,6 +6,7 @@ use std::fs::File;
 use std::path::Path;
 mod directory;
 mod inode;
+use std::mem::size_of;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -57,8 +58,8 @@ impl Filesystem for SimpleFilesystem {
 	}
 }
 
-fn create_entry(name: [char; directory::DIR_NAME], inum: u16) -> directory::Dirent {
-	return directory::Dirent { name: name, inum: inum };;
+fn create_entry(name: [char; directory::DIR_NAME], inum: u16, active: bool) -> directory::Dirent {
+	return directory::Dirent { name: name, inum: inum, active: active };;
 }
 
 fn main() -> std::io::Result<()> {
@@ -83,16 +84,35 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	
-	let data = &mmap[start+72..start+10+72]; // /hello.txt
+	let data = &mmap[start+52..start+10+52]; // /hello.txt
 	if let Ok(_) = std::str::from_utf8(data) {
 		println!("Second entry: {}", std::str::from_utf8(data).unwrap());
 	} else {
 		println!("ERROR: No Data!!");
 	}
 	
-	let (head, body, _tail) = unsafe { &mmap[start+72..start+72+72].align_to::<directory::Dirent>() }; // /hello.txt
-	assert!(head.is_empty(), "Data was not aligned");
-	let data: directory::Dirent = body[0];
+	println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
+	
+	let mut name: [char; directory::DIR_NAME] = ['\0'; 48];
+	
+	for i in 0..=directory::DIR_NAME-1 {
+		let data = &mmap[start+i..start+i+1];
+		name[i] = data[0] as char;
+	}
+	
+	let data = &mmap[start+49..start+50];
+	let inum = data[0] as u16;
+	
+	let data = &mmap[start+51..start+52];
+	let active = (data[0] != 0);
+	
+	let ent: directory::Dirent = directory::Dirent { name: name, inum: inum, active: active };
+	
+	println!("Dirent name: {}", ent.name.iter().collect::<String>());
+	
+	//let (head, body, _tail) = unsafe { &mmap[start+72..start+72+72].align_to::<directory::Dirent>() }; // /hello.txt
+	//assert!(head.is_empty(), "Data was not aligned");
+	//let data: directory::Dirent = body[0];
 	
 
 	// Get the mount point from the command line arguments

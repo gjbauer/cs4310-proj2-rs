@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 fuser = "0.15"
 memmap2 = "0.9.5"
+
+[build-dependencies]
+cc = "1.0"

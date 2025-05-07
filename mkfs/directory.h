@@ -8,14 +8,12 @@
 #include "pages.h"
 #include "inode.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef struct dirent {
     char name[DIR_NAME];
-    int  inum;
-    char type;
+    int16_t inum;
     bool active;
-    struct dirent *parent;
-    struct dirent *next;
 } dirent;
 
 int tree_lookup(const char* path, int i);
