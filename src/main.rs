@@ -58,10 +58,6 @@ impl Filesystem for SimpleFilesystem {
 	}
 }
 
-fn create_entry(name: [char; directory::DIR_NAME], inum: u16, active: bool) -> directory::Dirent {
-	return directory::Dirent { name: name, inum: inum, active: active };;
-}
-
 fn main() -> std::io::Result<()> {
 	// Open the file
 	let file = File::open("data.nufs")?;
@@ -93,22 +89,7 @@ fn main() -> std::io::Result<()> {
 	
 	println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
-	let mut name: [char; directory::DIR_NAME] = ['\0'; 48];
-	
-	for i in 0..=directory::DIR_NAME-1 {
-		let data = &mmap[start+i..start+i+1];
-		name[i] = data[0] as char;
-	}
-	
-	let data = &mmap[start+49..start+50];
-	let inum = data[0] as u16;
-	
-	let data = &mmap[start+51..start+52];
-	let active = (data[0] != 0);
-	
-	let ent: directory::Dirent = directory::Dirent { name: name, inum: inum, active: active };
-	
-	println!("Dirent name: {}", ent.name.iter().collect::<String>());
+	println!("Dirent name: {}", directory::dirent_deserialize(mmap, 0).name.iter().collect::<String>());
 	
 	//let (head, body, _tail) = unsafe { &mmap[start+72..start+72+72].align_to::<directory::Dirent>() }; // /hello.txt
 	//assert!(head.is_empty(), "Data was not aligned");

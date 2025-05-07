@@ -15,21 +15,7 @@ mkfs: $(OBJS)
 clean: unmount
 	rm mkfs *.o
 
-#mount: nufs
-#	mkdir -p mnt || true
-#	./nufs -s -f mnt data.nufs
-
-#unmount:
-#	fusermount -u mnt || true
-
-test: nufs
-	perl test.pl
-
-#gdb: nufs
-#	mkdir -p mnt || true
-#	gdb --args ./nufs -s -f mnt data.nufs
-
 open:
-	gedit *.c *.h
+	nvim *.c *.h
 
 .PHONY: clean mount unmount gdb

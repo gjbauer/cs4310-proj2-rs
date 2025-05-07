@@ -1,7 +1,32 @@
+use memmap2::Mmap;
+
 pub const DIR_NAME: usize = 48;
 
 pub struct Dirent {
 	pub name: [char; DIR_NAME],
 	pub inum: u16,
 	pub active: bool,
+}
+
+pub fn create_entry(name: [char; DIR_NAME], inum: u16, active: bool) -> Dirent {
+	return Dirent { name: name, inum: inum, active: active };;
+}
+
+pub fn dirent_deserialize(mmap: memmap2::Mmap, offset: usize) -> Dirent {
+	let start:usize = 5 * 4096;	// get_root_start();
+	
+	let mut name: [char; DIR_NAME] = ['\0'; 48];
+	
+	for i in 0..=DIR_NAME-1 {
+		let data = &mmap[start+offset+i..start+offset+i+1];
+		name[i] = data[0] as char;
+	}
+	
+	let data = &mmap[start+offset+49..start+offset+50];
+	let inum = data[0] as u16;
+	
+	let data = &mmap[start+offset+51..start+offset+52];
+	let active = data[0] != 0;
+	
+	return Dirent { name: name, inum: inum, active: active };
 }

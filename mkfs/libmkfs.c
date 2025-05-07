@@ -60,7 +60,6 @@ write_sp(char *data, int inode, int ptr, const char *buf, size_t size)
 	memcpy(data, buf, size);
 	data[size] = '\0';
 	n.size[ptr]=size;
-	printf("ptr = %d\n", ptr);
 	n.ptrs[ptr] = h.ptrs[0];
 	h.ptrs[0] += size;
 	memcpy(get_inode(inode), &n, sizeof(n));
@@ -138,7 +137,6 @@ find_parent(const char *path)
 		n = tree_lookup(ptr, n);
 		if (n<0) return -ENOENT;
 	}
-	// TODO : Locate a parent directory and return an inode, or an iptr
 	return n;
 }
 

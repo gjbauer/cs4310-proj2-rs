@@ -13,7 +13,6 @@ void* get_pages_bitmap();
 void* get_inode_bitmap();
 void* get_inode_start();
 void* get_root_start();
-void* get_data_start();
 int alloc_page();
 void free_page(int pnum);
 
