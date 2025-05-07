@@ -1,8 +1,8 @@
-const DIR_NAME: usize = 48;
+pub const DIR_NAME: usize = 48;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Dirent {
-	name: [char; DIR_NAME],
-	inum: u16,
+	pub name: [char; DIR_NAME],
+	pub inum: u16,
 }

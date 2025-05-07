@@ -57,6 +57,10 @@ impl Filesystem for SimpleFilesystem {
 	}
 }
 
+fn create_entry(name: [char; directory::DIR_NAME], inum: u16) -> directory::Dirent {
+	return directory::Dirent { name: name, inum: inum };;
+}
+
 fn main() -> std::io::Result<()> {
 	// Open the file
 	let file = File::open("data.nufs")?;
