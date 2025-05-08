@@ -10,8 +10,8 @@ pub struct Dirent {
 }
 
 pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mut l: i32) -> i32 {
-	if path[1] == '\0' { return 0; }
 	let paths: String = path.iter().collect();
+	if paths.len()==1 { return 0; }
 	let pathv: Vec<&str> =paths.split('/').collect();
 	
 	for i in 0..=pathv.len()-1 {
