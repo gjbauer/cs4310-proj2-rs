@@ -42,3 +42,6 @@ pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent)
 	return ent.inum as u32 ;
 }
 
+pub fn mknod(ent: Dirent, mode: ) -> u32 {
+}
+
