@@ -1,21 +1,11 @@
-// TODO: Implement bitmap operations in Rust..
-/*
-int bitmap_get(void* bm, int ii) {
-	int* ptr = (int*)bm;
-	int os = ii / sizeof(int);
-	ptr =  ptr + os;
-	return *ptr;
+
+pub fn bitmap_get(mmap: &memmap2::MmapMut, ii: i32) -> u8 {
+	return mmap[ii..ii+1][0];
 }
 
-void bitmap_put(void* bm, int ii, int vv) {
-	int* ptr = (int*)bm;
-	int os = ii / sizeof(int);
-	ptr =  ptr + os;
-	*ptr = vv;
+pub fn bitmap_put(mmap: &memmap2::MmapMut, ii: i32, vv: u8) -> u8 {
+	mmap[ii..ii+1][0] = vv;
+	mmap.flush()?;
+	return vv;
 }
-
-void bitmap_print(void* bm, int size) {
-	return;
-}
-*/
 
