@@ -26,7 +26,7 @@ pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME]) -> i32 {
 			cpath.push('/');
 		}
 		cpath.pop();
-	
+
 		let data = &mmap;
 		let n = inode::inode_deserialize(data, l);
 	
