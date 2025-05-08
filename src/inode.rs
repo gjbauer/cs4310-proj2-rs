@@ -1,3 +1,4 @@
+use crate::directory;
 
 const ins: usize = 2 * 4096;	// get_root_start();
 
@@ -8,6 +9,62 @@ pub struct Inode {
 	pub ptrs: [u16; 2],
 	pub iptr: i32,
 	pub inum: i32,
+}
+
+/*
+int
+inode_find(const char *path) {
+	int* ptr = (int*)get_inode_bitmap();
+	for (int i=2; i<512; i++) {
+		if (*ptr==0) {
+			if (get_inode(i)->size[0]>0&&get_inode(i)->refs==0) return i;
+		}
+	}
+	return alloc_inode(path);
+}
+
+int
+alloc_inode(const char *path) {
+	char *hpath;
+	char tpath[DIR_NAME];
+	void* ibm = get_inode_bitmap();
+	if (!strcmp(path, "/")) {
+		bitmap_put(ibm, 0, 1);
+		return 0;
+	}
+	if (bitmap_get(ibm, hash(path))==1) {
+		return alloc_inode(extend(path));
+	} else {
+		bitmap_put(ibm, hash(path), 1);
+		return hash(path);
+	}
+}
+
+pub fn alloc_inode(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
+	let paths: String = path.iter().collect();
+	if paths == "/" {
+		bitmap_put(mmap, 0, 1);
+		return 0;
+	}
+	if (bitmap_get(ibm, hash(path))==1) {
+		return alloc_inode(extend(path));
+	} else {
+		bitmap_put(ibm, hash(path), 1);
+		return hash(path);
+	}
+}
+*/
+
+pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
+	for i in 2..=512-1 {
+		if mmap[ins+(i*24)..ins+(i*24)+1][0]==0 {
+			// bitmap_put(mmap, i, 1);
+			let data = &mmap;
+			if inode_deserialize(mmap, i as i32).size[0]>0&&inode_deserialize(mmap, i as i32).refs==0 { return i as i32; }
+		}
+	}
+	let data = &mmap;
+	return alloc_inode(path, data);
 }
 
 pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
