@@ -73,7 +73,7 @@ pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, u32) {
 	for i in 0..=d.size[1]-1 {
 		c.push(mmap[ins+(d.ptrs[1] as usize)..ins+(d.ptrs[1] as usize)+1][0]);
 	}
-	return (c, d.inum);
+	return (c, d.inum);	// Recursive call?
 }
 
 
