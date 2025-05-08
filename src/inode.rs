@@ -6,11 +6,11 @@ pub struct Inode {
 	pub mode: u32,
 	pub size: [u16; 2],
 	pub ptrs: [u16; 2],
-	pub iptr: u32,
-	pub inum: u32,
+	pub iptr: i32,
+	pub inum: i32,
 }
 
-pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: u32) -> Inode {
+pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
 	let offset: usize = (num as usize) * std::mem::size_of::<Inode>();
 	
 	let mut data: [u8; 4] = [0; 4];
@@ -53,17 +53,17 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: u32) -> Inode {
 	for i in 3..=0 {
 		data[i] = mmap[ins+offset+16+i..ins+offset+16+i+1][0];
 	}
-	let iptr: u32 = u32::from_ne_bytes(data);
+	let iptr: i32 = i32::from_ne_bytes(data);
 	
 	for i in 3..=0 {
 		data[i] = mmap[ins+offset+20+i..ins+offset+20+i+1][0];
 	}
-	let inum: u32 = u32::from_ne_bytes(data);
+	let inum: i32 = i32::from_ne_bytes(data);
 	
 	return Inode { refs: refs, mode: mode, size: sizes, ptrs: ptrs, iptr: iptr, inum: inum };
 }
 
-pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> u32 {
+pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> i32 {
 	let offset: usize = (d.inum as usize) * std::mem::size_of::<Inode>();
 	
 	for i in 3..=0 {
@@ -103,7 +103,7 @@ pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> u32 {
 	return d.inum;
 }
 
-pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, u32) {
+pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, i32) {
 	let mut c: Vec<u8> = vec![];
 	for i in 0..=d.size[0]-1 {
 		c.push(mmap[ins+(d.ptrs[0] as usize)..ins+(d.ptrs[0] as usize)+1][0]);
