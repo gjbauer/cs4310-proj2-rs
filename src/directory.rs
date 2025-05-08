@@ -7,11 +7,6 @@ pub struct Dirent {
 	pub active: bool,
 }
 
-// TODO: Implement create a dirent...
-pub fn create_entry(name: [char; DIR_NAME], inum: u16, active: bool) -> Dirent {
-	return Dirent { name: name, inum: inum, active: active };
-}
-
 // TODO: Implement dirent_deserialize...
 pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	let start:usize = 5 * 4096;	// get_root_start();
