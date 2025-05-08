@@ -1,4 +1,3 @@
-use std::mem::size_of;
 
 pub struct Inode {
 	pub refs: u32,

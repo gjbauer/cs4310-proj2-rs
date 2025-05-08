@@ -1,16 +1,11 @@
-use std::collections::HashMap;
-use fuser::{Filesystem, MountOption, Request, Session, ReplyAttr, ReplyData, ReplyDirectory, FileAttr, FileType};
-use std::env;
-use memmap2::Mmap;
-use std::fs::File;
-use std::path::Path;
+use fuser::{Filesystem, Request, ReplyAttr, ReplyData, ReplyDirectory};
+use memmap2::MmapMut;
+use std::fs::OpenOptions;
+use std::io::{Write};
 mod directory;
 mod inode;
 mod proj_io;
 use std::mem::size_of;
-use memmap2::MmapMut;
-use std::fs::OpenOptions;
-use std::io::{self, Write};
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -33,10 +28,10 @@ impl Filesystem for SimpleFilesystem {
 		Err(Error::ENOENT) // Not found*/
 	}
 
-	fn readdir(&mut self, _req: &Request, ino: u64, _fh: u64, offset: i64, mut reply: ReplyDirectory) {
+	fn readdir(&mut self, _req: &Request, ino: u64, _fh: u64, offset: i64, reply: ReplyDirectory) {
 		// List the contents of a directory
 		//if  == Path::new("/") {	// _path.as_ref() <- old
-			let mut entries: Vec<directory::Dirent> = Vec::new();
+			let entries: Vec<directory::Dirent> = Vec::new();
 			// Example: Add the root directory entry
 			//entries.push((Path::new("/"), self.root_dir[&Path::new("/")].clone()));
 			// Add other entries as needed
@@ -64,25 +59,14 @@ impl Filesystem for SimpleFilesystem {
 
 fn main() -> std::io::Result<()> {
 	// Open the file
-	//let file = File::open("data.nufs")?;
-
-	// Create a memory map for the file
-	//let mmap = unsafe { Mmap::map(&file)? };
-	
 	let file = OpenOptions::new()
-                       .read(true)
-                       .write(true)
-                       .create(true)
-                       .open("data.nufs")?;
-
+		.read(true)
+		.write(true)
+		.create(true)
+		.open("data.nufs")?;
 	
-	let mut mmap = unsafe { MmapMut::map_mut(&file)? };
-	
-	// Access file content as a byte slice
-	let content = &mmap[..];
-
-	// Print it to the console
-	println!("File content: {}", String::from_utf8_lossy(content));
+	// TODO: Create a memory map for the file
+	let mmap: memmap2::MmapMut = unsafe { MmapMut::map_mut(&file)? };
 	
 	let start:usize = 5 * 4096;	// get_root_start();
 	

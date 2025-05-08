@@ -1,4 +1,3 @@
-use memmap2::Mmap;
 
 pub const DIR_NAME: usize = 48;
 
