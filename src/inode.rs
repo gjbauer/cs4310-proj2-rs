@@ -63,5 +63,9 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: usize) -> Inode {
 	return Inode { refs: refs, mode: mode, size: sizes, ptrs: ptrs, iptr: iptr, inum: inum };
 }
 
+pub fn inode_read() -> [u8] {
+
+}
+
 
 
