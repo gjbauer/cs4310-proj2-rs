@@ -63,7 +63,46 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: usize) -> Inode {
 	return Inode { refs: refs, mode: mode, size: sizes, ptrs: ptrs, iptr: iptr, inum: inum };
 }
 
-// TODO: Read from an inode...
+pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> u32 {
+	let offset: usize = (d.inum as usize) * std::mem::size_of::<Inode>();
+	
+	for i in 3..=0 {	// Endian: big/little
+		mmap[ins+offset+i..ins+offset+i+1][0] = d.refs.to_be_bytes()[i];
+	}
+	
+	for i in 3..=0 {	// Endian: big/little
+		mmap[ins+offset+4+i..ins+offset+4+i+1][0] = d.mode.to_be_bytes()[i];
+	}
+	
+	for i in 2..=0 {	// Endian: big/little
+		mmap[ins+offset+8+i..ins+offset+8+i+1][0] = d.size[0].to_be_bytes()[i];
+	}
+	
+	for i in 2..=0 {	// Endian: big/little
+		mmap[ins+offset+10+i..ins+offset+10+i+1][0] = d.size[1].to_be_bytes()[i];
+	}
+	
+	for i in 2..=0 {	// Endian: big/little
+		mmap[ins+offset+12+i..ins+offset+12+i+1][0] = d.ptrs[0].to_be_bytes()[i];
+	}
+	
+	for i in 2..=0 {	// Endian: big/little
+		mmap[ins+offset+14+i..ins+offset+14+i+1][0] = d.ptrs[1].to_be_bytes()[i];
+	}
+	
+	for i in 3..=0 {	// Endian: big/little
+		mmap[ins+offset+16+i..ins+offset+16+i+1][0] = d.iptr.to_be_bytes()[i];
+	}
+	
+	for i in 3..=0 {	// Endian: big/little
+		mmap[ins+offset+20+i..ins+offset+20+i+1][0] = d.inum.to_be_bytes()[i];
+	}
+	
+	mmap.flush().expect("ERROR.");
+	
+	return d.inum;
+}
+
 pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, u32) {
 	let mut c: Vec<u8> = vec![];
 	for i in 0..=d.size[0]-1 {
@@ -72,7 +111,7 @@ pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, u32) {
 	for i in 0..=d.size[1]-1 {
 		c.push(mmap[ins+(d.ptrs[1] as usize)..ins+(d.ptrs[1] as usize)+1][0]);
 	}
-	return (c, d.inum);	// Recursive call?
+	return (c, d.inum);
 }
 
 
