@@ -64,7 +64,8 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: usize) -> Inode {
 	return Inode { refs: refs, mode: mode, size: sizes, ptrs: ptrs, iptr: iptr, inum: inum };
 }
 
-pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> Vec<u8> {
+
+pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, u32) {
 	let mut c: Vec<u8> = vec![];
 	for i in 0..=d.size[0]-1 {
 		c.push(mmap[ins+(d.ptrs[0] as usize)..ins+(d.ptrs[0] as usize)+1][0]);
@@ -72,7 +73,7 @@ pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> Vec<u8> {
 	for i in 0..=d.size[1]-1 {
 		c.push(mmap[ins+(d.ptrs[1] as usize)..ins+(d.ptrs[1] as usize)+1][0]);
 	}
-	return c;
+	return (c, d.inum);
 }
 
 
