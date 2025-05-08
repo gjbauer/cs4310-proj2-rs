@@ -24,3 +24,23 @@ pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	
 	return Dirent { name: name, inum: inum, active: active } ;
 }
+
+// TODO: Implement dirent_serialize...
+pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent) -> u32 {
+	let mut name: [char; DIR_NAME] = ['\0'; 48];
+	
+	for i in 0..=DIR_NAME-1 {
+		for j in 3..=0 {
+			mmap[data_start+offset+(i*4)+j..data_start+offset+(i*4)+j+1][0] = ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j];
+		}
+	}
+	
+	for i in 2..=0 {
+		mmap[data_start+offset+(DIR_NAME*4)+i..data_start+offset+(DIR_NAME*4)+i+1][0] = ent.inum.to_be_bytes()[i];
+	}
+	
+	mmap[data_start+offset+(DIR_NAME*4)+3..data_start+offset+(DIR_NAME*4)+4][0] = ent.active as u8;
+	
+	return ent.inum as u32 ;
+}
+
