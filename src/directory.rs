@@ -1,3 +1,5 @@
+use crate::inode;
+
 const data_start:usize = 5 * 4096;	// get_root_start();
 pub const DIR_NAME: usize = 48;
 
@@ -5,6 +7,62 @@ pub struct Dirent {
 	pub name: [char; DIR_NAME],
 	pub inum: u32,
 	pub active: bool,
+}
+
+/*int tree_lookup(const char* subpath, int i) {
+	if (!strcmp(subpath, "/")) return 0;
+	inode *n = get_inode(i);
+	dirent *p0, *p1;
+lookup_loop:
+	p0 = (dirent*)((char*)get_root_start()+n->ptrs[0]);
+	p1 = (dirent*)((char*)get_root_start()+n->ptrs[1]);
+	if (!strcmp(p0->name, subpath)) {
+		return p0->inum;
+	} else if (n->ptrs[0]==0) {
+		return -ENOENT;
+	} else if (!strcmp(p1->name, subpath)) {
+		return p1->inum;
+	} else if (n->ptrs[1]==0) {
+		return -ENOENT;
+	} else if (n->iptr!=0) {
+		n = get_inode(n->iptr);
+		goto lookup_loop;
+	}
+	return -ENOENT;
+}*/
+pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mut l: u32) -> i32 {
+	if path[1] == '\0' { return 0; }
+	let paths: String = path.iter().collect();
+	let pathv: Vec<&str> =paths.split('/').collect();
+	
+	for i in 0..=pathv.len()-1 {
+		let mut cpath: String = "/".to_string();
+		for j in 0..=i {
+			cpath.push_str(&pathv[j]);
+			cpath.push('/');
+		}
+		cpath.pop();
+	
+		let data = &mmap;
+		let n = inode::inode_deserialize(data, l);
+	
+		let data = &mmap;
+		let p0 = dirent_deserialize(data, n.ptrs[0] as usize);
+		let mut nm0: String = "".to_string();
+		for i in 0..DIR_NAME-1 { nm0.push(p0.name[i]); }
+		if nm0 == cpath { return p0.inum as i32; }
+	
+		let data = &mmap;
+		let p1 = dirent_deserialize(data, n.ptrs[1] as usize);
+		let mut nm1: String = "".to_string();
+		for i in 0..DIR_NAME-1 { nm1.push(p1.name[i]); }
+		if nm1 == cpath { return p1.inum as i32; }
+		
+		if n.iptr == 0 { return -2; }
+		else { l = n.iptr; }
+	}
+	
+	return -2;
 }
 
 pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
@@ -41,7 +99,7 @@ pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent)
 	
 	return ent.inum as u32 ;
 }
-
-pub fn mknod(ent: Dirent, mode: ) -> u32 {
+/*
+pub fn mknod(ent: Dirent, mode: u32) -> u32 {
 }
-
+*/

@@ -10,8 +10,8 @@ pub struct Inode {
 	pub inum: u32,
 }
 
-pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: usize) -> Inode {
-	let offset: usize = num * std::mem::size_of::<Inode>();
+pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: u32) -> Inode {
+	let offset: usize = (num as usize) * std::mem::size_of::<Inode>();
 	
 	let mut data: [u8; 4] = [0; 4];
 	let mut data16: [u8; 2] = [0; 2];
