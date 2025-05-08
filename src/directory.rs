@@ -7,7 +7,6 @@ pub struct Dirent {
 	pub active: bool,
 }
 
-// TODO: Implement dirent_deserialize...
 pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
 	
@@ -25,7 +24,6 @@ pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	return Dirent { name: name, inum: inum, active: active } ;
 }
 
-// TODO: Implement dirent_serialize...
 pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent) -> u32 {
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
 	
