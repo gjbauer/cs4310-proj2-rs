@@ -6,8 +6,11 @@ use std::fs::File;
 use std::path::Path;
 mod directory;
 mod inode;
+mod proj_io;
 use std::mem::size_of;
-use std::mem::transmute;
+use memmap2::MmapMut;
+use std::fs::OpenOptions;
+use std::io::{self, Write};
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -61,11 +64,20 @@ impl Filesystem for SimpleFilesystem {
 
 fn main() -> std::io::Result<()> {
 	// Open the file
-	let file = File::open("data.nufs")?;
+	//let file = File::open("data.nufs")?;
 
 	// Create a memory map for the file
-	let mmap = unsafe { Mmap::map(&file)? };
+	//let mmap = unsafe { Mmap::map(&file)? };
+	
+	let file = OpenOptions::new()
+                       .read(true)
+                       .write(true)
+                       .create(true)
+                       .open("data.nufs")?;
 
+	
+	let mut mmap = unsafe { MmapMut::map_mut(&file)? };
+	
 	// Access file content as a byte slice
 	let content = &mmap[..];
 

@@ -14,7 +14,7 @@ pub fn create_entry(name: [char; DIR_NAME], inum: u16, active: bool) -> Dirent {
 }
 
 // TODO: Implement dirent_deserialize...
-pub fn dirent_deserialize(mmap: &memmap2::Mmap, offset: usize) -> Dirent {
+pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	let start:usize = 5 * 4096;	// get_root_start();
 	
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
