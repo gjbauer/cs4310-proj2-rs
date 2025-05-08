@@ -9,10 +9,15 @@ pub struct Dirent {
 	pub active: bool,
 }
 
-pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mut l: i32) -> i32 {
+/*
+pub fn readdir(mmap: &memmap2::MmapMut, path: [char; DIR_NAME]) -> Vec<Dirent> {
+}*/
+
+pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME]) -> i32 {
 	let paths: String = path.iter().collect();
 	if paths.len()==1 { return 0; }
 	let pathv: Vec<&str> =paths.split('/').collect();
+	let mut l: i32 = 0;
 	
 	for i in 0..=pathv.len()-1 {
 		let mut cpath: String = "/".to_string();
