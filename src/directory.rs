@@ -29,13 +29,19 @@ pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mut l: i32) -
 		let p0 = dirent_deserialize(data, n.ptrs[0] as usize);
 		let mut nm0: String = "".to_string();
 		for i in 0..DIR_NAME-1 { nm0.push(p0.name[i]); }
-		if nm0 == cpath { l = p0.inum as i32; }
+		if nm0 == cpath {
+			if nm0==paths { return p0.inum as i32; }
+			l = p0.inum as i32;
+		}
 	
 		let data = &mmap;
 		let p1 = dirent_deserialize(data, n.ptrs[1] as usize);
 		let mut nm1: String = "".to_string();
 		for i in 0..DIR_NAME-1 { nm1.push(p1.name[i]); }
-		if nm1 == cpath { l = p1.inum as i32; }
+		if nm1 == cpath { 
+			if nm1==paths { return p1.inum as i32; }
+			l = p1.inum as i32;
+		}
 		
 		if n.iptr == 0 { return -2; }
 		else { l = n.iptr; }
