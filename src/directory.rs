@@ -3,7 +3,7 @@ pub const DIR_NAME: usize = 48;
 
 pub struct Dirent {
 	pub name: [char; DIR_NAME],
-	pub inum: u16,
+	pub inum: u32,
 	pub active: bool,
 }
 
@@ -17,7 +17,7 @@ pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	}
 	
 	let data = mmap[data_start+offset+49..data_start+offset+50][0];
-	let inum = data as u16;
+	let inum = data as u32;
 	
 	let data = mmap[data_start+offset+51..data_start+offset+52][0];
 	let active = data != 0;
@@ -35,7 +35,7 @@ pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent)
 		}
 	}
 	
-	for i in 2..=0 {
+	for i in 3..=0 {
 		mmap[data_start+offset+(DIR_NAME*4)+i..data_start+offset+(DIR_NAME*4)+i+1][0] = ent.inum.to_be_bytes()[i];
 	}
 	
