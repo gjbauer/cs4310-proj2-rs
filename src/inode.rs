@@ -1,6 +1,16 @@
 
 const ins: usize = 2 * 4096;	// get_root_start();
 
+/*pub struct Inode {
+	pub refs: u32,
+	pub mode: u32,
+	pub size: [u16; 2],
+	pub ptrs: [u16; 2],
+	pub iptr: i32,
+	pub inum: i32,
+}*/
+
+#[repr(C)]
 pub struct Inode {
 	pub refs: u32,
 	pub mode: u32,
