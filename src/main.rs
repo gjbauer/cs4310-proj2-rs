@@ -1,14 +1,7 @@
 use fuser::{Filesystem, Request, ReplyAttr, ReplyData, ReplyDirectory};
-use memmap2::MmapMut;
-use std::fs::OpenOptions;
-use std::io::{Write};
 mod directory;
 mod inode;
-mod bitmap;
-mod pages;
-mod disk;
 mod proj_io;
-use std::mem::size_of;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -87,10 +80,6 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	*/
-	unsafe {
-	//pages::pages_init(b"data.nufs");
-	pages::hello();
-	}
 	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
