@@ -1,4 +1,3 @@
-use crate::directory;
 
 const ins: usize = 2 * 4096;	// get_root_start();
 
@@ -54,7 +53,7 @@ pub fn alloc_inode(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -
 	}
 }
 */
-
+/*
 pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
 	for i in 2..=512-1 {
 		if mmap[ins+(i*24)..ins+(i*24)+1][0]==0 {
@@ -65,7 +64,7 @@ pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) ->
 	}
 	let data = &mmap;
 	return alloc_inode(path, data);
-}
+}*/
 
 pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
 	let offset: usize = (num as usize) * std::mem::size_of::<Inode>();
@@ -83,7 +82,7 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
 	}
 	let mode: u32 = u32::from_ne_bytes(data);
 	
-	for i in 1..=0 {
+	for i in 3..=0 {
 		data16[i] = mmap[ins+offset+8+i..ins+offset+8+i+1][0];
 	}
 	let size0: u16 = u16::from_ne_bytes(data16);

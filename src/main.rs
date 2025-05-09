@@ -4,6 +4,9 @@ use std::fs::OpenOptions;
 use std::io::{Write};
 mod directory;
 mod inode;
+mod bitmap;
+mod pages;
+mod disk;
 mod proj_io;
 use std::mem::size_of;
 
@@ -66,10 +69,10 @@ fn main() -> std::io::Result<()> {
 		.open("data.nufs")?;
 	
 	// TODO: Create a memory map for the file
-	let mmap: memmap2::MmapMut = unsafe { MmapMut::map_mut(&file)? };
+	let mut mmap: memmap2::MmapMut = unsafe { MmapMut::map_mut(&file)? };
 	
 	let start:usize = 5 * 4096;	// get_root_start();
-	
+	/*
 	let data = &mmap[start..start+1]; // Read the first byte of root
 	if let Ok(_) = std::str::from_utf8(data) {
 		println!("First entry: {}", std::str::from_utf8(data).unwrap());
@@ -83,7 +86,7 @@ fn main() -> std::io::Result<()> {
 	} else {
 		println!("ERROR: No Data!!");
 	}
-	
+	*/
 	
 	println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
@@ -93,6 +96,16 @@ fn main() -> std::io::Result<()> {
 	
 	let data = &mmap;
 	println!("refs = {}", inode::inode_deserialize(data, 0).refs);
+	
+	let name = directory::dirent_deserialize(data, 0).name;
+	let data = &mmap;
+	let d = directory::Dirent { name: name, inum: 5, active: false };
+	mmap = directory::dirent_serialize(mmap, 0, &d);
+	
+	mmap.flush_async()?;
+	
+	let data = &mmap[directory::data_start+49..directory::data_start+50][0];
+	println!("Dirent inum: {}", data);
 	
 	//let data = &mmap[ins+offset+51..ins+offset+52];
 	//let active = data[0] != 0;

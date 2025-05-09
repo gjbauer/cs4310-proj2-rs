@@ -1,6 +1,6 @@
 use crate::inode;
 
-const data_start:usize = 5 * 4096;	// get_root_start();
+pub const data_start:usize = 5 * 4096;	// get_root_start();
 pub const DIR_NAME: usize = 48;
 
 pub struct Dirent {
@@ -72,8 +72,8 @@ pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	return Dirent { name: name, inum: inum, active: active } ;
 }
 
-pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent) -> u32 {
-	let mut name: [char; DIR_NAME] = ['\0'; 48];
+pub fn dirent_serialize(mut mmap: memmap2::MmapMut, offset: usize, ent: &Dirent) -> memmap2::MmapMut {
+	let name: [char; DIR_NAME] = ['\0'; 48];
 	
 	for i in 0..=DIR_NAME-1 {
 		for j in 3..=0 {
@@ -82,12 +82,14 @@ pub fn dirent_serialize(mmap: &mut memmap2::MmapMut, offset: usize, ent: Dirent)
 	}
 	
 	for i in 3..=0 {
-		mmap[data_start+offset+(DIR_NAME*4)+i..data_start+offset+(DIR_NAME*4)+i+1][0] = ent.inum.to_be_bytes()[i];
+		mmap[data_start+offset+(DIR_NAME*4)+i..data_start+offset+(DIR_NAME*4)+i+1][0] = ent.inum.to_le_bytes()[i];
 	}
+	
+	mmap.flush_async().expect("ERROR.");
 	
 	mmap[data_start+offset+(DIR_NAME*4)+3..data_start+offset+(DIR_NAME*4)+4][0] = ent.active as u8;
 	
-	return ent.inum as u32 ;
+	return mmap ;
 }
 /*
 pub fn mknod(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mode: u32) -> i32 {
