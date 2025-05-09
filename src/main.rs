@@ -62,14 +62,14 @@ impl Filesystem for SimpleFilesystem {
 
 fn main() -> std::io::Result<()> {
 	// Open the file
-	let file = OpenOptions::new()
+	/*let file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.open("data.nufs")?;
 	
 	// TODO: Create a memory map for the file
-	let mut mmap: memmap2::MmapMut = unsafe { MmapMut::map_mut(&file)? };
+	let mut mmap: memmap2::MmapMut = unsafe { MmapMut::map_mut(&file)? };*/
 	
 	let start:usize = 5 * 4096;	// get_root_start();
 	/*
@@ -87,8 +87,12 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	*/
+	unsafe {
+	//pages::pages_init(b"data.nufs");
+	pages::hello();
+	}
 	
-	println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
+	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
 	let data = &mmap;
 	
@@ -98,14 +102,14 @@ fn main() -> std::io::Result<()> {
 	println!("refs = {}", inode::inode_deserialize(data, 0).refs);
 	
 	let name = directory::dirent_deserialize(data, 0).name;
-	let data = &mmap;
+	//let data = &mmap;
 	let d = directory::Dirent { name: name, inum: 5, active: false };
 	mmap = directory::dirent_serialize(mmap, 0, &d);
 	
 	mmap.flush_async()?;
 	
 	let data = &mmap[directory::data_start+49..directory::data_start+50][0];
-	println!("Dirent inum: {}", data);
+	println!("Dirent inum: {}", data);*/
 	
 	//let data = &mmap[ins+offset+51..ins+offset+52];
 	//let active = data[0] != 0;
