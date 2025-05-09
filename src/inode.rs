@@ -1,5 +1,5 @@
 
-const ins: usize = 2 * 4096;	// get_root_start();
+const INS: usize = 2 * 4096;	// get_root_start();
 
 /*pub struct Inode {
 	pub refs: u32,
@@ -66,7 +66,7 @@ pub fn alloc_inode(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -
 /*
 pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
 	for i in 2..=512-1 {
-		if mmap[ins+(i*24)..ins+(i*24)+1][0]==0 {
+		if mmap[INS+(i*24)..INS+(i*24)+1][0]==0 {
 			// bitmap_put(mmap, i, 1);
 			let data = &mmap;
 			if inode_deserialize(mmap, i as i32).size[0]>0&&inode_deserialize(mmap, i as i32).refs==0 { return i as i32; }
@@ -82,47 +82,47 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
 	let mut data: [u8; 4] = [0; 4];
 	let mut data16: [u8; 2] = [0; 2];
 	for i in 3..=0 {	// Endian: big/little
-		data[i] = mmap[ins+offset+i..ins+offset+i+1][0];
+		data[i] = mmap[INS+offset+i..INS+offset+i+1][0];
 	}
 	
 	let refs: u32 = u32::from_ne_bytes(data);
 	
 	for i in 3..=0 {
-		data[i] = mmap[ins+offset+4+i..ins+offset+4+i+1][0];
+		data[i] = mmap[INS+offset+4+i..INS+offset+4+i+1][0];
 	}
 	let mode: u32 = u32::from_ne_bytes(data);
 	
 	for i in 3..=0 {
-		data16[i] = mmap[ins+offset+8+i..ins+offset+8+i+1][0];
+		data16[i] = mmap[INS+offset+8+i..INS+offset+8+i+1][0];
 	}
 	let size0: u16 = u16::from_ne_bytes(data16);
 	
 	for i in 1..=0 {
-		data16[i] = mmap[ins+offset+10+i..ins+offset+10+i+1][0];
+		data16[i] = mmap[INS+offset+10+i..INS+offset+10+i+1][0];
 	}
 	let size1: u16 = u16::from_ne_bytes(data16);
 	
 	let sizes = [size0, size1];
 	
 	for i in 1..=0 {
-		data16[i] = mmap[ins+offset+12+i..ins+offset+12+i+1][0];
+		data16[i] = mmap[INS+offset+12+i..INS+offset+12+i+1][0];
 	}
 	let ptrs0: u16 = u16::from_ne_bytes(data16);
 	
 	for i in 1..=0 {
-		data16[i] = mmap[ins+offset+14+i..ins+offset+14+i+1][0];
+		data16[i] = mmap[INS+offset+14+i..INS+offset+14+i+1][0];
 	}
 	let ptrs1: u16 = u16::from_ne_bytes(data16);
 	
 	let ptrs = [ptrs0, ptrs1];
 	
 	for i in 3..=0 {
-		data[i] = mmap[ins+offset+16+i..ins+offset+16+i+1][0];
+		data[i] = mmap[INS+offset+16+i..INS+offset+16+i+1][0];
 	}
 	let iptr: i32 = i32::from_ne_bytes(data);
 	
 	for i in 3..=0 {
-		data[i] = mmap[ins+offset+20+i..ins+offset+20+i+1][0];
+		data[i] = mmap[INS+offset+20+i..INS+offset+20+i+1][0];
 	}
 	let inum: i32 = i32::from_ne_bytes(data);
 	
@@ -133,35 +133,35 @@ pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> i32 {
 	let offset: usize = (d.inum as usize) * std::mem::size_of::<Inode>();
 	
 	for i in 3..=0 {
-		mmap[ins+offset+i..ins+offset+i+1][0] = d.refs.to_be_bytes()[i];
+		mmap[INS+offset+i..INS+offset+i+1][0] = d.refs.to_be_bytes()[i];
 	}
 	
 	for i in 3..=0 {
-		mmap[ins+offset+4+i..ins+offset+4+i+1][0] = d.mode.to_be_bytes()[i];
+		mmap[INS+offset+4+i..INS+offset+4+i+1][0] = d.mode.to_be_bytes()[i];
 	}
 	
 	for i in 2..=0 {
-		mmap[ins+offset+8+i..ins+offset+8+i+1][0] = d.size[0].to_be_bytes()[i];
+		mmap[INS+offset+8+i..INS+offset+8+i+1][0] = d.size[0].to_be_bytes()[i];
 	}
 	
 	for i in 2..=0 {
-		mmap[ins+offset+10+i..ins+offset+10+i+1][0] = d.size[1].to_be_bytes()[i];
+		mmap[INS+offset+10+i..INS+offset+10+i+1][0] = d.size[1].to_be_bytes()[i];
 	}
 	
 	for i in 2..=0 {
-		mmap[ins+offset+12+i..ins+offset+12+i+1][0] = d.ptrs[0].to_be_bytes()[i];
+		mmap[INS+offset+12+i..INS+offset+12+i+1][0] = d.ptrs[0].to_be_bytes()[i];
 	}
 	
 	for i in 2..=0 {
-		mmap[ins+offset+14+i..ins+offset+14+i+1][0] = d.ptrs[1].to_be_bytes()[i];
+		mmap[INS+offset+14+i..INS+offset+14+i+1][0] = d.ptrs[1].to_be_bytes()[i];
 	}
 	
 	for i in 3..=0 {
-		mmap[ins+offset+16+i..ins+offset+16+i+1][0] = d.iptr.to_be_bytes()[i];
+		mmap[INS+offset+16+i..INS+offset+16+i+1][0] = d.iptr.to_be_bytes()[i];
 	}
 	
 	for i in 3..=0 {
-		mmap[ins+offset+20+i..ins+offset+20+i+1][0] = d.inum.to_be_bytes()[i];
+		mmap[INS+offset+20+i..INS+offset+20+i+1][0] = d.inum.to_be_bytes()[i];
 	}
 	
 	mmap.flush().expect("ERROR.");
@@ -172,10 +172,10 @@ pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> i32 {
 pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, i32) {
 	let mut c: Vec<u8> = vec![];
 	for i in 0..=d.size[0]-1 {
-		c.push(mmap[ins+(d.ptrs[0] as usize)..ins+(d.ptrs[0] as usize)+1][0]);
+		c.push(mmap[INS+(d.ptrs[0] as usize)..INS+(d.ptrs[0] as usize)+1][0]);
 	}
 	for i in 0..=d.size[1]-1 {
-		c.push(mmap[ins+(d.ptrs[1] as usize)..ins+(d.ptrs[1] as usize)+1][0]);
+		c.push(mmap[INS+(d.ptrs[1] as usize)..INS+(d.ptrs[1] as usize)+1][0]);
 	}
 	return (c, d.iptr);
 }
