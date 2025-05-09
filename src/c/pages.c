@@ -96,7 +96,3 @@ free_page(int pnum)
     void* pbm = get_pages_bitmap();
     bitmap_put(pbm, pnum, 0);
 }
-
-void hello() {
-	printf("Hello!\n");
-}
