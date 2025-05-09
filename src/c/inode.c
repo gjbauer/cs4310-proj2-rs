@@ -38,7 +38,3 @@ int alloc_inode(const char *path) {
 	}
 }
 
-void write_inode(Inode d, int32_t pos) {
-	memcpy((get_root_start()+pos), &d, sizeof(d));
-}
-
