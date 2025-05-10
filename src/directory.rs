@@ -1,4 +1,5 @@
 use crate::inode;
+use std::os::raw::c_char;
 
 pub const DATA_START:usize = 5 * 4096;	// get_root_start();
 pub const DIR_NAME: usize = 48;
@@ -73,23 +74,23 @@ pub fn dirent_deserialize(mmap: &[u8], offset: usize) -> Dirent {
 	return Dirent { name: name, inum: inum, active: active } ;
 }
 
-pub fn dirent_serialize(ent: &Dirent) -> Vec<u8> {
+pub fn dirent_serialize(ent: &Dirent) -> Vec<c_char> {
 	let name: [char; DIR_NAME] = ['\0'; 48];
-	let mut mvec: Vec<u8> = vec![];
+	let mut mvec: Vec<c_char> = vec![];
 	
 	for i in 0..=DIR_NAME-1 {
 		for j in 3..=0 {
-			mvec.push(ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j]);
+			mvec.push(ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j] as c_char);
 		}
 	}
 	
 	for i in 3..=0 {
-		mvec.push(ent.inum.to_le_bytes()[i]);
+		mvec.push(ent.inum.to_le_bytes()[i] as c_char);
 	}
 	
 	mvec.push(0);
 	
-	mvec.push(ent.active as u8);
+	mvec.push(ent.active as u8 as c_char);
 	
 	return mvec ;
 }
