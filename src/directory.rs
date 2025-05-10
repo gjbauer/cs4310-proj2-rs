@@ -14,7 +14,7 @@ pub struct Dirent {
 pub fn readdir(mmap: &memmap2::MmapMut, path: [char; DIR_NAME]) -> Vec<Dirent> {
 }*/
 
-pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
+pub fn tree_lookup(mmap: &[i8],path: [char; DIR_NAME]) -> i32 {
 	let paths: String = path.iter().collect();
 	if paths.len()==1 { return 0; }
 	let pathv: Vec<&str> =paths.split('/').collect();
@@ -57,12 +57,12 @@ pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
 }
 
 
-pub fn dirent_deserialize(mmap: &[u8], offset: usize) -> Dirent {
+pub fn dirent_deserialize(mmap: &[i8], offset: usize) -> Dirent {
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
 	
 	for i in 0..=DIR_NAME-1 {
 		let data = mmap[DATA_START+offset+i..DATA_START+offset+i+1][0];
-		name[i] = data as char;
+		name[i] = data as u8 as char;
 	}
 	
 	let data = mmap[DATA_START+offset+49..DATA_START+offset+50][0];

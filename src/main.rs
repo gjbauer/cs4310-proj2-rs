@@ -84,6 +84,11 @@ fn main() -> std::io::Result<()> {
 	}
 	*/
 	
+	unsafe {
+		let ptr = disk::read(52, 5*4096);
+		let slice: &[i8] = std::slice::from_raw_parts(ptr, 52);
+	}
+	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	
 	let data = &mmap;
