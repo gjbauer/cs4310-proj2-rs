@@ -2,7 +2,7 @@
 
 # Planned Implementation Direction
 
-## Step 1: Learn the process behind bindgen and writing build scripts
+~~## Step 1: Learn the process behind bindgen and writing build scripts~~
 
 ## Step 2: Write the interface between our now greatly minimized C code and Rust
 
