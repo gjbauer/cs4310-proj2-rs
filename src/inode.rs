@@ -4,16 +4,6 @@ use crate:: hash;
 
 const INS: usize = 2 * 4096;	// get_root_start();
 
-/*pub struct Inode {
-	pub refs: u32,
-	pub mode: u32,
-	pub size: [u16; 2],
-	pub ptrs: [u16; 2],
-	pub iptr: i32,
-	pub inum: i32,
-}*/
-
-#[repr(C)]
 pub struct Inode {
 	pub refs: u32,
 	pub mode: u32,
@@ -34,23 +24,7 @@ inode_find(const char *path) {
 	}
 	return alloc_inode(path);
 }
-
-int
-alloc_inode(const char *path) {
-	char *hpath;
-	char tpath[DIR_NAME];
-	void* ibm = get_inode_bitmap();
-	if (!strcmp(path, "/")) {
-		bitmap_put(ibm, 0, 1);
-		return 0;
-	}
-	if (bitmap_get(ibm, hash(path))==1) {
-		return alloc_inode(extend(path));
-	} else {
-		bitmap_put(ibm, hash(path), 1);
-		return hash(path);
-	}
-}*/
+*/
 
 pub fn alloc_inode(path: [char; directory::DIR_NAME]) -> i32 {
 	let paths: String = path.iter().collect();
