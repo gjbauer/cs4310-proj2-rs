@@ -13,7 +13,7 @@ pub struct Dirent {
 pub fn readdir(mmap: &memmap2::MmapMut, path: [char; DIR_NAME]) -> Vec<Dirent> {
 }*/
 
-pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME]) -> i32 {
+pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
 	let paths: String = path.iter().collect();
 	if paths.len()==1 { return 0; }
 	let pathv: Vec<&str> =paths.split('/').collect();
@@ -55,7 +55,8 @@ pub fn tree_lookup(mmap: &memmap2::MmapMut,path: [char; DIR_NAME]) -> i32 {
 	return -2;
 }
 
-pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
+
+pub fn dirent_deserialize(mmap: &[u8], offset: usize) -> Dirent {
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
 	
 	for i in 0..=DIR_NAME-1 {
@@ -72,24 +73,25 @@ pub fn dirent_deserialize(mmap: &memmap2::MmapMut, offset: usize) -> Dirent {
 	return Dirent { name: name, inum: inum, active: active } ;
 }
 
-pub fn dirent_serialize(mut mmap: memmap2::MmapMut, offset: usize, ent: &Dirent) -> memmap2::MmapMut {
+pub fn dirent_serialize(ent: &Dirent) -> Vec<u8> {
 	let name: [char; DIR_NAME] = ['\0'; 48];
+	let mut mvec: Vec<u8> = vec![];
 	
 	for i in 0..=DIR_NAME-1 {
 		for j in 3..=0 {
-			mmap[DATA_START+offset+(i*4)+j..DATA_START+offset+(i*4)+j+1][0] = ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j];
+			mvec.push(ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j]);
 		}
 	}
 	
 	for i in 3..=0 {
-		mmap[DATA_START+offset+(DIR_NAME*4)+i..DATA_START+offset+(DIR_NAME*4)+i+1][0] = ent.inum.to_le_bytes()[i];
+		mvec.push(ent.inum.to_le_bytes()[i]);
 	}
 	
-	mmap.flush_async().expect("ERROR.");
+	mvec.push(0);
 	
-	mmap[DATA_START+offset+(DIR_NAME*4)+3..DATA_START+offset+(DIR_NAME*4)+4][0] = ent.active as u8;
+	mvec.push(ent.active as u8);
 	
-	return mmap ;
+	return mvec ;
 }
 /*
 pub fn mknod(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mode: u32) -> i32 {

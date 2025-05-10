@@ -3,6 +3,8 @@ use std::ffi::CString;
 mod directory;
 mod inode;
 mod pages;
+mod bitmap;
+mod disk;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
@@ -81,10 +83,6 @@ fn main() -> std::io::Result<()> {
 		println!("ERROR: No Data!!");
 	}
 	*/
-	
-	unsafe {
-	pages::pages_init(CString::from(c"data.nufs").into_raw());
-	}
 	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
 	

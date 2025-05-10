@@ -76,7 +76,7 @@ pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) ->
 	return alloc_inode(path, data);
 }*/
 
-pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
+pub fn inode_deserialize(mmap: &[u8], num: i32) -> Inode {
 	let offset: usize = (num as usize) * std::mem::size_of::<Inode>();
 	
 	let mut data: [u8; 4] = [0; 4];
@@ -129,7 +129,7 @@ pub fn inode_deserialize(mmap: &memmap2::MmapMut, num: i32) -> Inode {
 	return Inode { refs: refs, mode: mode, size: sizes, ptrs: ptrs, iptr: iptr, inum: inum };
 }
 
-pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> i32 {
+pub fn inode_serialize(mmap: &mut [u8], d: Inode) -> i32 {
 	let offset: usize = (d.inum as usize) * std::mem::size_of::<Inode>();
 	
 	for i in 3..=0 {
@@ -164,12 +164,10 @@ pub fn inode_serialize(mmap: &mut memmap2::MmapMut, d: Inode) -> i32 {
 		mmap[INS+offset+20+i..INS+offset+20+i+1][0] = d.inum.to_be_bytes()[i];
 	}
 	
-	mmap.flush().expect("ERROR.");
-	
 	return d.inum;
 }
 
-pub fn inode_read(d: Inode, mmap: &memmap2::MmapMut) -> (Vec<u8>, i32) {
+pub fn inode_read(d: Inode, mmap: &[u8]) -> (Vec<u8>, i32) {
 	let mut c: Vec<u8> = vec![];
 	for i in 0..=d.size[0]-1 {
 		c.push(mmap[INS+(d.ptrs[0] as usize)..INS+(d.ptrs[0] as usize)+1][0]);

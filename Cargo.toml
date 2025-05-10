@@ -1,13 +1,11 @@
 [package]
-name = "cs4310_proj2"
+name = "cs4310_proj2_rs"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-fuser = "0.15"
-memmap2 = "0.9.5"
+fuser = "0.15.1"
 
 [build-dependencies]
 cc = "1.0"
 bindgen = "0.71.1"
-
