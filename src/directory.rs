@@ -6,7 +6,7 @@ pub const DIR_NAME: usize = 48;
 
 pub struct Dirent {
 	pub name: [char; DIR_NAME],
-	pub inum: u32,
+	pub inum: i32,
 	pub active: bool,
 }
 
@@ -14,9 +14,9 @@ pub struct Dirent {
 pub fn readdir(mmap: &memmap2::MmapMut, path: [char; DIR_NAME]) -> Vec<Dirent> {
 }*/
 
-pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
+pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> (i32, i32) {
 	let paths: String = path.iter().collect();
-	if paths.len()==1 { return 0; }
+	if paths.len()==1 { return (0, 0); }
 	let pathv: Vec<&str> =paths.split('/').collect();
 	let mut l: i32 = 0;
 	
@@ -42,7 +42,7 @@ pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
 		let mut nm0: String = "".to_string();
 		for i in 0..DIR_NAME-1 { nm0.push(p0.name[i]); }
 		if nm0 == cpath {
-			if nm0==paths { return p0.inum as i32; }
+			if nm0==paths { return (0, p0.inum); }
 			l = p0.inum as i32;
 		}
 	
@@ -57,17 +57,24 @@ pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> i32 {
 		let mut nm1: String = "".to_string();
 		for i in 0..DIR_NAME-1 { nm1.push(p1.name[i]); }
 		if nm1 == cpath { 
-			if nm1==paths { return p1.inum as i32; }
-			l = p1.inum as i32;
+			if nm1==paths { return (0, p1.inum); }
+			l = p1.inum;
 		}
 		
-		if n.iptr == 0 { return -2; }
+		if n.iptr == 0 { return (-2, l); }
 		else { l = n.iptr; }
 	}
 	
-	return -2;
+	return (-2, l);
 }
 
+pub fn rename(ent: Dirent, to: [char; DIR_NAME] ) -> Dirent {
+	let mut rnm: Dirent = Dirent { name: [0 as char; DIR_NAME], inum: ent.inum, active: ent.active };
+	for i in 0..=DIR_NAME-1 {
+		rnm.name[i] = to[i];
+	}
+	return rnm;
+}
 
 pub fn dirent_deserialize(mmap: &[i8]) -> Dirent {
 	let mut name: [char; DIR_NAME] = ['\0'; 48];
@@ -78,7 +85,7 @@ pub fn dirent_deserialize(mmap: &[i8]) -> Dirent {
 	}
 	
 	let data = mmap[49..50][0];
-	let inum = data as u32;
+	let inum = data as i32;
 	
 	let data = mmap[51..52][0];
 	let active = data != 0;
@@ -104,9 +111,12 @@ pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	
 	return mvec ;
 }
-/*
-pub fn mknod(mmap: &memmap2::MmapMut,path: [char; DIR_NAME], mode: u32) -> i32 {
+
+pub fn mknod(mmap: &[i8]: [char; DIR_NAME], mode: u32) -> i32 {
+	let ret = tree_lookup(mmap, path);
+	let rv = ret.0;
+	let l = ret.1;
 	//while true {
 	//}
 }
-*/
+
