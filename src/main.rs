@@ -87,11 +87,12 @@ fn main() -> std::io::Result<()> {
 	
 	unsafe {
 		disk::storage_init();
-		let ptr = disk::read_d(52, 5*4096);
+		let ptr = disk::read_d(52, 52);
 		let slice = slice::from_raw_parts(ptr, 52);
 		//let u8slice : &[u8] = unsafe{ slice::from_raw_parts(i8slice.as_ptr() as *const u8, i8slice.len()) };
 		let d = directory::dirent_deserialize(slice);
-		println!("{}", d.inum);
+		let name: String = d.name.iter().collect();
+		println!("{}", name);
 		
 	}
 	

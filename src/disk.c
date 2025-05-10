@@ -126,8 +126,8 @@ void bitmap_put(void* bm, size_t ii, size_t vv) {
 	*ptr = vv;
 }
 
-void inode_bitmap_get(size_t ii) {
-	bitmap_get(get_inode_bitmap(), ii);
+size_t inode_bitmap_get(size_t ii) {
+	return bitmap_get(get_inode_bitmap(), ii);
 }
 
 void inode_bitmap_put(size_t ii, size_t vv) {
