@@ -87,7 +87,7 @@ fn main() -> std::io::Result<()> {
 	
 	unsafe {
 		disk::storage_init();
-		let ptr = disk::read_d(52, 0);
+		let ptr = disk::read_d(52, 52);
 		let slice = slice::from_raw_parts(ptr, 52);
 		let mut d = directory::dirent_deserialize(slice);
 		let name: String = d.name.iter().collect();
