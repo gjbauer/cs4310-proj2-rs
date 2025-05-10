@@ -14,7 +14,7 @@ pub struct Dirent {
 pub fn readdir(mmap: &memmap2::MmapMut, path: [char; DIR_NAME]) -> Vec<Dirent> {
 }*/
 
-pub fn tree_lookup(mmap: &[u8],path: [char; DIR_NAME]) -> (i32, i32) {
+pub fn tree_lookup(mmap: &[i8],path: [char; DIR_NAME]) -> (i32, i32) {
 	let paths: String = path.iter().collect();
 	if paths.len()==1 { return (0, 0); }
 	let pathv: Vec<&str> =paths.split('/').collect();
@@ -112,7 +112,7 @@ pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	return mvec ;
 }
 
-pub fn mknod(mmap: &[i8]: [char; DIR_NAME], mode: u32) -> i32 {
+pub fn mknod(mmap: &[i8], path: [char; DIR_NAME], mode: u32) -> i32 {
 	let ret = tree_lookup(mmap, path);
 	let rv = ret.0;
 	let l = ret.1;
