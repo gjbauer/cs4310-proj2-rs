@@ -87,13 +87,15 @@ fn main() -> std::io::Result<()> {
 	
 	unsafe {
 		disk::storage_init();
-		let ptr = disk::read_d(52, 52);
+		let ptr = disk::read_d(52, 0);
 		let slice = slice::from_raw_parts(ptr, 52);
-		//let u8slice : &[u8] = unsafe{ slice::from_raw_parts(i8slice.as_ptr() as *const u8, i8slice.len()) };
-		let d = directory::dirent_deserialize(slice);
+		let mut d = directory::dirent_deserialize(slice);
 		let name: String = d.name.iter().collect();
 		println!("{}", name);
-		
+		d.name[1] = 'd';
+		let mut d = directory::dirent_serialize(&d);
+		let c: &mut [i8] = &mut d;
+		disk::write_d(c.as_mut_ptr(), 52, 52);
 	}
 	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());

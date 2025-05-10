@@ -86,23 +86,21 @@ pub fn dirent_deserialize(mmap: &[i8]) -> Dirent {
 	return Dirent { name: name, inum: inum, active: active } ;
 }
 
-pub fn dirent_serialize(ent: &Dirent) -> Vec<u8> {
+pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	let name: [char; DIR_NAME] = ['\0'; 48];
-	let mut mvec: Vec<u8> = vec![];
+	let mut mvec: Vec<i8> = vec![];
 	
 	for i in 0..=DIR_NAME-1 {
-		for j in 3..=0 {
-			mvec.push(ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[j]);
-		}
+		mvec.push(ent.name[i].encode_utf8(&mut [0; DIR_NAME]).as_bytes()[0] as i8);
 	}
 	
 	for i in 3..=0 {
-		mvec.push(ent.inum.to_le_bytes()[i]);
+		mvec.push(ent.inum.to_le_bytes()[i] as i8);
 	}
 	
 	mvec.push(0);
 	
-	mvec.push(ent.active as u8);
+	mvec.push(ent.active as i8);
 	
 	return mvec ;
 }
