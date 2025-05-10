@@ -1,9 +1,9 @@
 use fuser::{Filesystem, Request, ReplyAttr, ReplyData, ReplyDirectory};
 use std::ffi::CString;
+use std::str;
+use std::slice;
 mod directory;
 mod inode;
-mod pages;
-mod bitmap;
 mod disk;
 
 struct SimpleFilesystem {
@@ -85,8 +85,13 @@ fn main() -> std::io::Result<()> {
 	*/
 	
 	unsafe {
-		let ptr = disk::read(52, 5*4096);
-		let slice: &[i8] = std::slice::from_raw_parts(ptr, 52);
+		disk::storage_init();
+		let ptr = disk::read_d(52, 5*4096);
+		let slice = slice::from_raw_parts(ptr, 52);
+		//let u8slice : &[u8] = unsafe{ slice::from_raw_parts(i8slice.as_ptr() as *const u8, i8slice.len()) };
+		let d = directory::dirent_deserialize(slice);
+		println!("{}", d.inum);
+		
 	}
 	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
