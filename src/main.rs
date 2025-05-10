@@ -5,6 +5,7 @@ use std::slice;
 mod directory;
 mod inode;
 mod disk;
+mod hash;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes

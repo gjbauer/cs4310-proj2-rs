@@ -1,0 +1,27 @@
+use crate::directory;
+/*
+unsigned long
+    hash(unsigned char *str)
+    {
+        unsigned long hash = 5381;
+        int c;
+
+        while (c = *str++)
+            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+        return hash;
+    }
+*/
+
+
+pub fn hash(name: [char; directory::DIR_NAME]) -> usize {
+	let mut hash = 5381;
+	let mut c: usize;
+	
+	for i in 0..=directory::DIR_NAME-1 {
+		c = name[i] as usize;
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	}
+	
+	return hash;
+}

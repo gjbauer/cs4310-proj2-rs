@@ -113,18 +113,24 @@ void write_d(char *buf, size_t size, size_t offset) {
 }
 
 size_t bitmap_get(void* bm, size_t ii) {
-	size_t* ptr = (size_t*)get_inode_bitmap();
+	size_t* ptr = (size_t*)bm;
 	size_t os = ii / sizeof(size_t);
 	ptr =  ptr + os;
 	return *ptr;
 }
 
 void bitmap_put(void* bm, size_t ii, size_t vv) {
-	size_t* ptr = (size_t*)get_inode_bitmap();
+	size_t* ptr = (size_t*)bm;
 	size_t os = ii / sizeof(size_t);
 	ptr =  ptr + os;
 	*ptr = vv;
 }
 
+void inode_bitmap_get(size_t ii) {
+	bitmap_get(get_inode_bitmap(), ii);
+}
 
+void inode_bitmap_put(size_t ii, size_t vv) {
+	bitmap_put(get_inode_bitmap(), ii, vv);
+}
 

@@ -25,4 +25,7 @@ void write_d(char *buf, size_t size, size_t offset);
 size_t bitmap_get(void* bm, size_t ii);
 void bitmap_put(void* bm, size_t ii, size_t vv);
 
+size_t inode_bitmap_get(size_t ii);
+void inode_bitmap_put(size_t ii, size_t vv);
+
 #endif

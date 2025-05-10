@@ -1,3 +1,6 @@
+use crate::disk;
+use crate::directory;
+use crate:: hash;
 
 const INS: usize = 2 * 4096;	// get_root_start();
 
@@ -47,22 +50,31 @@ alloc_inode(const char *path) {
 		bitmap_put(ibm, hash(path), 1);
 		return hash(path);
 	}
-}
+}*/
 
-pub fn alloc_inode(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
+pub fn alloc_inode(path: [char; directory::DIR_NAME]) -> i32 {
 	let paths: String = path.iter().collect();
+	unsafe {
 	if paths == "/" {
-		bitmap_put(mmap, 0, 1);
+		disk::inode_bitmap_put(0, 1);
 		return 0;
 	}
-	if (bitmap_get(ibm, hash(path))==1) {
-		return alloc_inode(extend(path));
+	if (disk::inode_bitmap_get(hash::hash(path))==1) {
+		let mut path2: String = path.iter().collect();
+		path2.pop();
+		path2.push(char::from_u32(hash::hash(path) as u32).unwrap());
+		let mut path3: [char; directory::DIR_NAME] = ['\0'; 48];
+		for i in 0..directory::DIR_NAME-1 {
+			path3[i] = path2.chars().nth(i).unwrap();
+		}
+		return alloc_inode(path3);
 	} else {
-		bitmap_put(ibm, hash(path), 1);
-		return hash(path);
+		disk::inode_bitmap_put(hash::hash(path), 1);
+		return hash::hash(path) as i32;
+	}
 	}
 }
-*/
+
 /*
 pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &memmap2::MmapMut) -> i32 {
 	for i in 2..=512-1 {

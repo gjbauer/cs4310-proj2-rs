@@ -2205,6 +2205,12 @@ unsafe extern "C" {
 unsafe extern "C" {
     pub fn bitmap_put(bm: *mut ::std::os::raw::c_void, ii: usize, vv: usize);
 }
+unsafe extern "C" {
+    pub fn inode_bitmap_get(ii: usize) -> usize;
+}
+unsafe extern "C" {
+    pub fn inode_bitmap_put(ii: usize, vv: usize);
+}
 pub type __builtin_va_list = [__va_list_tag; 1usize];
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
