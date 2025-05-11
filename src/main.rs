@@ -1,4 +1,5 @@
 use fuser::{Filesystem, Request, ReplyAttr, ReplyData, ReplyDirectory};
+use std::collections::HashMap;
 use std::ffi::CString;
 use std::str;
 use std::slice;
@@ -9,7 +10,7 @@ mod hash;
 
 struct SimpleFilesystem {
 	// Here, you would store your filesystem data, e.g., a map of paths to file attributes
-	//root_dir: HashMap<Path, directory::Dirent>,
+	root_dir: HashMap<String, directory::Dirent>,
 	// Add other necessary fields for your filesystem implementation
 }
 
