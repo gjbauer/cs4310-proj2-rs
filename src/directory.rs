@@ -112,10 +112,10 @@ pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	return mvec ;
 }
 
-pub fn mknod(mmap: &[i8], path: [char; DIR_NAME], mode: u32) -> i32 {
+/*pub fn mknod(mmap: &[i8], path: [char; DIR_NAME], mode: u32) -> i32 {
 	let ret = tree_lookup(mmap, path);
 	let rv = ret.0;
 	let l = ret.1;
 	// TODO: Based on return value place new node, or alloc an inode and place it
-}
+}*/
 
