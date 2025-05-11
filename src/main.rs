@@ -96,7 +96,7 @@ fn main() -> std::io::Result<()> {
 		d.name[1] = 'h';
 		let mut d = directory::dirent_serialize(&d);
 		let c: &mut [i8] = &mut d;
-		disk::write_d(c.as_mut_ptr(), 52, 52);
+		disk::write_d(c.as_mut_ptr(), 52, 52+(5*4096));
 	}
 	
 	/*println!("Size of struct: {} bytes", size_of::<directory::Dirent>());
