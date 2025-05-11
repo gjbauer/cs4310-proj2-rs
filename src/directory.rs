@@ -117,5 +117,8 @@ pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	let rv = ret.0;
 	let l = ret.1;
 	// TODO: Based on return value place new node, or alloc an inode and place it
+	if rv == -2 {
+		
+	}
 }*/
 
