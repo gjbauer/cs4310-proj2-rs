@@ -2,7 +2,7 @@ use crate::disk;
 use crate::directory;
 use crate:: hash;
 
-const INS: usize = 2 * 4096;	// get_root_start();
+const INS: usize = 2 * 4096;	// get_inode_start();
 
 pub struct Inode {
 	pub refs: u32,
