@@ -88,12 +88,12 @@ fn main() -> std::io::Result<()> {
 	
 	unsafe {
 		disk::storage_init();
-		let ptr = disk::read_d(52, 52);
-		let slice = slice::from_raw_parts(ptr, 52);
+		let ptr = disk::read_d(52, 52+(5*4096));
+		let slice = slice::from_raw_parts(ptr, 52+(5*4096));
 		let mut d = directory::dirent_deserialize(slice);
 		let name: String = d.name.iter().collect();
 		println!("{}", name);
-		d.name[1] = 'd';
+		d.name[1] = 'h';
 		let mut d = directory::dirent_serialize(&d);
 		let c: &mut [i8] = &mut d;
 		disk::write_d(c.as_mut_ptr(), 52, 52);

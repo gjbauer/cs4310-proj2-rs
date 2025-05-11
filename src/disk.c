@@ -102,13 +102,13 @@ free_page(int pnum)
 
 char* read_d(size_t size, size_t offset) {
 	char *bytes = (char*) malloc( size * sizeof(char) );
-	for( int i = 0 ; i < size ; i++ ) bytes[i] = *( (char*) get_root_start() + offset + i );
+	for( int i = 0 ; i < size ; i++ ) bytes[i] = *( (char*) pages_get_page(0) + offset + i );
 	bytes[size] = '\0';
 	return bytes;
 }
 
 void write_d(char *buf, size_t size, size_t offset) {
-	char *ptr = ( (char*) get_root_start() + offset );
+	char *ptr = ( (char*) pages_get_page(0) + offset );
 	for( int i = 0 ; i < size ; i++ ) ptr[i] = buf[i] ;
 }
 
