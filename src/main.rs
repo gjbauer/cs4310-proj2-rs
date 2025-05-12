@@ -1,11 +1,11 @@
 extern crate fuse;
 extern crate libc;
-extern crate time;
 
 use std::env;
 use std::path::Path;
 use std::slice;
 use libc::{ENOENT, ENOSYS};
+use std::ffi::OsStr;
 use fuse::{FileAttr, FileType, Filesystem, Request, ReplyAttr, ReplyData, ReplyEntry, ReplyDirectory};
 mod inode;
 mod directory;
@@ -16,8 +16,23 @@ struct Nufs;
 
 impl Filesystem for Nufs {
 	fn getattr(&mut self, _req: &Request, ino: u64, reply: ReplyAttr) {
-		println!("getattr(ino={})", ino);
+		unsafe {
+			let mut ptrv: Vec<i8> = vec![];
+			for i in 0..23 {
+				ptrv.push(disk::read_d(1, ((2*4096)+(ino*24)+i) as usize) as i8);
+			}
+			
+			inode::inode_v_deserialize(&ptrv, ino as i32);
+			println!("getattr(ino={})", ino);
+			reply.error(ENOSYS);
+		}
+	}
+	fn readdir(&mut self, _req: &Request, ino: u64, fh: u64, offset: i64, mut reply: ReplyDirectory) {
+		println!("readdir(ino={}, fh={}, offset={})", ino, fh, offset);
 		reply.error(ENOSYS);
+	}
+	fn mknod(&mut self, _req: &Request<'_>, _parent: u64, _name: &OsStr, _mode: u32, _rdev: u32, reply: ReplyEntry,) {
+		println!("mknod({:?})", _name);
 	}
 }
 
@@ -33,7 +48,7 @@ fn main() {
 	unsafe {
 		disk::storage_init();
 		let ptr = disk::read_d(52, 52+(5*4096));
-		let slice = slice::from_raw_parts(ptr, 52+(5*4096));
+		let slice = slice::from_raw_parts(ptr, 52);
 		let mut d = directory::dirent_deserialize(slice);
 		let name: String = d.name.iter().collect();
 		println!("{}", name);
