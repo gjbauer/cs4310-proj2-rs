@@ -17,12 +17,12 @@ struct Nufs;
 impl Filesystem for Nufs {
 	fn getattr(&mut self, _req: &Request, ino: u64, reply: ReplyAttr) {
 		unsafe {
-			let mut ptrv: Vec<i8> = vec![];
+			let mut buf: [i8; 24] = [42; 24];
 			for i in 0..23 {
-				ptrv.push(disk::read_d(1, ((2*4096)+(ino*24)+i) as usize) as i8);
+				buf[i] = disk::read_d(1, ((2*4096)+(ino as usize*24)+i)) as i8;
 			}
 			
-			inode::inode_v_deserialize(&ptrv, ino as i32);
+			inode::inode_deserialize(&buf, ino as i32);
 			println!("getattr(ino={})", ino);
 			reply.error(ENOSYS);
 		}

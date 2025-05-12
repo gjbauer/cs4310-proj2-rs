@@ -1,5 +1,5 @@
 [package]
-name = "cs4310_proj2_rs"
+name = "nufs"
 version = "0.1.0"
 edition = "2024"
 
@@ -10,7 +10,6 @@ fuse = "0.3.1"
 fuser = "0.15.1"
 libc = "0.2.172"
 pkg-config = "0.3.32"
-time = "0.3.41"
 
 [build-dependencies]
 cc = "1.0"

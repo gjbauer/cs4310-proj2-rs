@@ -36,7 +36,14 @@ pages_init(const char* path)
 void
 storage_init()
 {
-    pages_init("data.nufs");
+    pages_fd = open("data.nufs", O_RDWR, 0644);
+    if (pages_fd == -1) {
+    	printf("ERROR: data.nufs not foun!\n");
+    	return;
+    }
+
+    pages_base = mmap(0, NUFS_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pages_fd, 0);
+    assert(pages_base != MAP_FAILED);
 }
 
 void
