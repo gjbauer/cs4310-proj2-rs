@@ -20,7 +20,7 @@ pub fn alloc_inode(path: [char; directory::DIR_NAME]) -> i32 {
 		unsafe { disk::inode_bitmap_put(0, 1); }
 		return 0;
 	}
-	if (unsafe { disk::inode_bitmap_get(hash::hash(path))==1 }) {
+	if unsafe { disk::inode_bitmap_get(hash::hash(path))==1 } {
 		let mut path2: String = path.iter().collect();
 		path2.pop();
 		path2.push(char::from_u32(hash::hash(path) as u32).unwrap());
@@ -53,28 +53,28 @@ pub fn inode_deserialize(mmap: &[i8], num: i32) -> Inode {
 	let mut data: [i8; 4] = [0; 4];
 	let mut data16: [i8; 2] = [0; 2];
 	for i in 3..=0 {	// Endian: big/little
-		data[i] = mmap[INS+offset+i..INS+offset+i+1][0];
+		data[i] = mmap[i..i+1][0];
 	}
 	
 	let vecx: Vec<u32> = data.iter().map(|&x| x as u32).collect();
 	let refs: u32 = vecx[0];
 	
 	for i in 3..=0 {
-		data[i] = mmap[INS+offset+4+i..INS+offset+4+i+1][0];
+		data[i] = mmap[4+i..4+i+1][0];
 	}
 	
 	let vecx: Vec<u32> = data.iter().map(|&x| x as u32).collect();
 	let mode: u32 = vecx[0];
 	
 	for i in 3..=0 {
-		data16[i] = mmap[INS+offset+8+i..INS+offset+8+i+1][0];
+		data16[i] = mmap[8+i..8+i+1][0];
 	}
 	
 	let vecx: Vec<u16> = data16.iter().map(|&x| x as u16).collect();
 	let size0: u16 = vecx[0];
 	
 	for i in 1..=0 {
-		data16[i] = mmap[INS+offset+10+i..INS+offset+10+i+1][0];
+		data16[i] = mmap[10+i..10+i+1][0];
 	}
 	
 	let vecx: Vec<u16> = data16.iter().map(|&x| x as u16).collect();
@@ -83,14 +83,14 @@ pub fn inode_deserialize(mmap: &[i8], num: i32) -> Inode {
 	let sizes = [size0, size1];
 	
 	for i in 1..=0 {
-		data16[i] = mmap[INS+offset+12+i..INS+offset+12+i+1][0];
+		data16[i] = mmap[12+i..12+i+1][0];
 	}
 	
 	let vecx: Vec<u16> = data16.iter().map(|&x| x as u16).collect();
 	let ptrs0: u16 = vecx[0];
 	
 	for i in 1..=0 {
-		data16[i] = mmap[INS+offset+14+i..INS+offset+14+i+1][0];
+		data16[i] = mmap[14+i..14+i+1][0];
 	}
 	
 	let vecx: Vec<u16> = data16.iter().map(|&x| x as u16).collect();
@@ -99,14 +99,14 @@ pub fn inode_deserialize(mmap: &[i8], num: i32) -> Inode {
 	let ptrs = [ptrs0, ptrs1];
 	
 	for i in 3..=0 {
-		data[i] = mmap[INS+offset+16+i..INS+offset+16+i+1][0];
+		data[i] = mmap[16+i..16+i+1][0];
 	}
 	
 	let vecx: Vec<i32> = data.iter().map(|&x| x as i32).collect();
 	let iptr: i32 = vecx[0];
 	
 	for i in 3..=0 {
-		data[i] = mmap[INS+offset+20+i..INS+offset+20+i+1][0];
+		data[i] = mmap[20+i..20+i+1][0];
 	}
 	
 	let vecx: Vec<i32> = data.iter().map(|&x| x as i32).collect();

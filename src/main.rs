@@ -19,10 +19,10 @@ impl Filesystem for Nufs {
 		unsafe {
 			let mut buf: [i8; 24] = [42; 24];
 			for i in 0..23 {
-				buf[i] = disk::read_d(1, ((2*4096)+(ino as usize*24)+i)) as i8;
+				buf[i] = disk::read_d(1, (2*4096)+((ino as usize*24)+i) as i8;
 			}
 			
-			inode::inode_deserialize(&buf, ino as i32);
+			let d = inode::inode_deserialize(&buf, ino as i32);
 			println!("getattr(ino={})", ino);
 			reply.error(ENOSYS);
 		}
