@@ -1,25 +1,33 @@
+mod inode;
+mod directory;
+mod disk;
+mod hash;
 // TODO: Implement all of the functions as you would in C in Rust, and then call them from another C layer which can interact directly with FUSE
 
 // implementation for: man 2 access
 // Checks if a file exists.
-pub unsafe fn ufs_access(path: [char; DIR_NAME], mask: i32)
+#[unsafe(no_mangle)]
+pub fn ufs_access(path: [char; directory::DIR_NAME], mask: i32)
 {
 }
 
 // mknod makes a filesystem object like a file or directory
 // called for: man 2 open, man 2 link
-pub unsafe fn ufs_mknod(path: [char; DIR_NAME], mode: i32, rdev: i32)
+#[unsafe(no_mangle)]
+pub fn ufs_mknod(path: [char; directory::DIR_NAME], mode: i32, rdev: i32)
 {
 }
 
 // most of the following callbacks implement
 // another system call; see section 2 of the manual
-pub unsafe fn ufs_mkdir(path: [char; DIR_NAME], mode: i32, rdev: i32)
+#[unsafe(no_mangle)]
+pub fn ufs_mkdir(path: [char; directory::DIR_NAME], mode: i32, rdev: i32)
 {
 	// TODO: Nested Directories
 }
 
-pub unsafe fn ufs_create(path: [char; DIR_NAME], mode: i32)
+#[unsafe(no_mangle)]
+pub fn ufs_create(path: [char; directory::DIR_NAME], mode: i32)
 {
 	/*
 	if (nufs_mknod(path, mode, 0)) {
@@ -30,6 +38,18 @@ pub unsafe fn ufs_create(path: [char; DIR_NAME], mode: i32)
         	return l;
 	} else return -1;
 	 */
+}
+
+#[unsafe(no_mangle)]
+pub fn ufs_unlink(path: [char; directory::DIR_NAME])
+{
+	let rv: i32 = 0;
+	let mut pathv: Vec<char> = vec![];
+	for i in 0..=directory::DIR_NAME-1 {
+		pathv.push(path[i]);
+	}
+	let paths: String = pathv.into_iter().collect();
+	println!("unlink({}) -> {}\n", paths, rv);
 }
 
 /*
