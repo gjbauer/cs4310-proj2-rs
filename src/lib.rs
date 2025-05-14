@@ -1,37 +1,27 @@
 // TODO: Implement all of the functions as you would in C in Rust, and then call them from another C layer which can interact directly with FUSE
 
+// implementation for: man 2 access
+// Checks if a file exists.
 pub unsafe fn ufs_access(path: [char; DIR_NAME], mask: i32)
 {
 }
 
+// mknod makes a filesystem object like a file or directory
+// called for: man 2 open, man 2 link
 pub unsafe fn ufs_mknod(path: [char; DIR_NAME], mode: i32, rdev: i32)
 {
 }
-/*
-// implementation for: man 2 access
-// Checks if a file exists.
-int
-nufs_access(const char *path, int mask)
+
+// most of the following callbacks implement
+// another system call; see section 2 of the manual
+pub unsafe fn ufs_mkdir(path: [char; DIR_NAME], mode: i32, rdev: i32)
 {
-    int rv = 0;
-    int l = tree_lookup(path);
-    rv = (l>-1) ? F_OK : ENOENT;
-    printf("access(%s, %04o) -> %d\n", path, mask, rv);
-    return rv;
+	// TODO: Nested Directories
 }
 
-// mknod makes a filesystem object like a file or directory
-// called for: man 2 open, man 2 link
-int
-nufs_mknod(const char *path, mode_t mode, dev_t rdev)
+pub unsafe fn ufs_create(path: [char; DIR_NAME], mode: i32)
 {
-    int rv = 0;
-    printf("mknod(%s, %04o) -> %d\n", path, mode, rv);
-    return rv;
-}
-
-int
-nufs_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
+	/*
 	if (nufs_mknod(path, mode, 0)) {
     		int l = tree_lookup(path);
     		inode *n = get_inode(l);
@@ -39,8 +29,10 @@ nufs_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
         	n->size = 0;
         	return l;
 	} else return -1;
+	 */
 }
 
+/*
 // implementation for: man 2 stat
 // gets an object's attributes (type, permissions, size, etc)
 int
@@ -51,7 +43,7 @@ nufs_getattr(const char *path, struct stat *st)
     if (st) printf("getattr(%s) -> (%d) {mode: %04o, size: %ld}\n", path, rv, st->st_mode, st->st_size);
     else printf("getattr(%s) -> (%d)\n", path, rv);
     return rv;
-}
+}	// <- keep getattr in C?
 
 // implementation for: man 2 readdir
 // lists the contents of a directory
@@ -61,17 +53,6 @@ nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 {
     printf("readdir(%s) -> %d\n", path, rv);
     return 0;
-}
-
-// most of the following callbacks implement
-// another system call; see section 2 of the manual
-int
-nufs_mkdir(const char *path, mode_t mode)
-{
-    int rv = nufs_mknod(path, mode | 040000, 0);
-    // TODO: Nested Directories
-    printf("mkdir(%s) -> %d\n", path, rv);
-    return rv;
 }
 
 int
