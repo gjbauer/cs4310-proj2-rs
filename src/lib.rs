@@ -7,8 +7,12 @@ mod hash;
 // implementation for: man 2 access
 // Checks if a file exists.
 #[unsafe(no_mangle)]
-pub fn ufs_access(path: [char; directory::DIR_NAME], mask: i32)
+extern "C" fn ufs_access(path: [char; directory::DIR_NAME], mask: i32)
 {
+}
+
+unsafe extern "C" {
+	pub fn ufs_access(path: [char; directory::DIR_NAME], mask: i32);
 }
 
 // mknod makes a filesystem object like a file or directory
