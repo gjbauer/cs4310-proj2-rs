@@ -43,13 +43,31 @@ pub fn ufs_create(path: [char; directory::DIR_NAME], mode: i32)
 #[unsafe(no_mangle)]
 pub fn ufs_unlink(path: [char; directory::DIR_NAME])
 {
-	let rv: i32 = 0;
+	let mut rv: i32 = 0;
 	let mut pathv: Vec<char> = vec![];
 	for i in 0..=directory::DIR_NAME-1 {
 		pathv.push(path[i]);
 	}
 	let paths: String = pathv.into_iter().collect();
 	println!("unlink({}) -> {}\n", paths, rv);
+}
+
+#[unsafe(no_mangle)]
+pub fn ufs_link(from: [char; directory::DIR_NAME], to: [char; directory::DIR_NAME])
+{
+	let mut rv: i32 = 0;
+	let mut fromv: Vec<char> = vec![];
+	for i in 0..=directory::DIR_NAME-1 {
+		fromv.push(from[i]);
+	}
+	let mut tov: Vec<char> = vec![];
+	for i in 0..=directory::DIR_NAME-1 {
+		tov.push(to[i]);
+	}
+	let froms: String = fromv.into_iter().collect();
+	let tos: String = tov.into_iter().collect();
+	println!("link({} => {}) -> {}\n", froms, tos, rv);
+	return rv;
 }
 
 /*
