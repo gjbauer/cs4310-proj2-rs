@@ -1,5 +1,12 @@
 // TODO: Implement all of the functions as you would in C in Rust, and then call them from another C layer which can interact directly with FUSE
 
+pub unsafe fn ufs_access(path: [char; DIR_NAME], mask: i32)
+{
+}
+
+pub unsafe fn ufs_mknod(path: [char; DIR_NAME], mode: i32, rdev: i32)
+{
+}
 /*
 // implementation for: man 2 access
 // Checks if a file exists.
