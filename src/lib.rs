@@ -94,20 +94,6 @@ nufs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 }
 
 int
-nufs_unlink(const char *path)
-{
-    printf("unlink(%s) -> %d\n", path, rv);
-    return rv;
-}
-
-int
-nufs_link(const char *from, const char *to)
-{
-    printf("link(%s => %s) -> %d\n", from, to, rv);
-	return rv;
-}
-
-int
 nufs_rmdir(const char *path)
 {
     int rv = -1;
