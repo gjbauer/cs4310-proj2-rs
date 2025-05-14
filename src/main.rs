@@ -16,16 +16,7 @@ struct Nufs;
 
 impl Filesystem for Nufs {
 	fn getattr(&mut self, _req: &Request, ino: u64, reply: ReplyAttr) {
-		unsafe {
-			let mut buf: [i8; 24] = [42; 24];
-			for i in 0..23 {
-				buf[i] = disk::read_d(1, (2*4096)+((ino as usize*24)+i) as i8;
-			}
-			
-			let d = inode::inode_deserialize(&buf, ino as i32);
-			println!("getattr(ino={})", ino);
-			reply.error(ENOSYS);
-		}
+		println!("getattr(ino={})", ino);
 	}
 	fn readdir(&mut self, _req: &Request, ino: u64, fh: u64, offset: i64, mut reply: ReplyDirectory) {
 		println!("readdir(ino={}, fh={}, offset={})", ino, fh, offset);

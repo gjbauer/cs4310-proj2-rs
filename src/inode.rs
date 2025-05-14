@@ -1,6 +1,7 @@
 use crate::disk;
 use crate::directory;
 use crate:: hash;
+use std::slice;
 
 const INS: usize = 2 * 4096;	// get_inode_start();
 
@@ -40,16 +41,38 @@ pub fn inode_find(path: [char; directory::DIR_NAME], mmap: &[i8]) -> i32 {
 		if mmap[(i*24)..(i*24)+1][0]==0 {
 			unsafe { disk::inode_bitmap_put(i, 1); }
 			let data = &mmap;
-			if inode_deserialize(mmap, i as i32).size[0]>0&&inode_deserialize(mmap, i as i32).refs==0 { return i as i32; }
+			if inode_deserialize(mmap).size[0]>0&&inode_deserialize(mmap).refs==0 { return i as i32; }
 		}
 	}
 	let data = &mmap;
 	return alloc_inode(path);
 }
 
-pub fn inode_deserialize(mmap: &[i8], num: i32) -> Inode {
-	let offset: usize = (num as usize) * std::mem::size_of::<Inode>();
-	
+pub fn get_size(node: i32) -> usize {
+	unsafe {
+		let ptr = disk::read_d(24, 24+(2*4096));
+		let slice = slice::from_raw_parts(ptr, 24);
+		let n = inode_deserialize(slice);
+		let mut ab = n.size[0] as usize + n.size[1] as usize;
+		if n.inum == 0 { return ab; }
+		else { return ab + get_size(n.inum); }
+	}
+}
+
+pub fn get_blocks(node: i32) -> usize {
+	unsafe {
+		let ptr = disk::read_d(24, 24+(2*4096));
+		let slice = slice::from_raw_parts(ptr, 24);
+		let n = inode_deserialize(slice);
+		let mut ab: usize = 0;
+		if n.size[0]>0 { ab+=1; }
+		if n.size[1]>0 { ab+=1; }
+		if n.inum == 0 { return ab; }
+		else { return ab + get_blocks(n.inum); }
+	}
+}
+
+pub fn inode_deserialize(mmap: &[i8]) -> Inode {
 	let mut data: [i8; 4] = [0; 4];
 	let mut data16: [i8; 2] = [0; 2];
 	for i in 3..=0 {	// Endian: big/little
@@ -116,38 +139,37 @@ pub fn inode_deserialize(mmap: &[i8], num: i32) -> Inode {
 }
 
 pub fn inode_serialize(mmap: &mut [u8], d: Inode) -> i32 {
-	let offset: usize = (d.inum as usize) * std::mem::size_of::<Inode>();
-	
+	let mut mmap: Vec<i8> = vec![];
 	for i in 3..=0 {
-		mmap[INS+offset+i..INS+offset+i+1][0] = d.refs.to_be_bytes()[i];
-	}
-	
-	for i in 3..=0 {
-		mmap[INS+offset+4+i..INS+offset+4+i+1][0] = d.mode.to_be_bytes()[i];
-	}
-	
-	for i in 2..=0 {
-		mmap[INS+offset+8+i..INS+offset+8+i+1][0] = d.size[0].to_be_bytes()[i];
-	}
-	
-	for i in 2..=0 {
-		mmap[INS+offset+10+i..INS+offset+10+i+1][0] = d.size[1].to_be_bytes()[i];
-	}
-	
-	for i in 2..=0 {
-		mmap[INS+offset+12+i..INS+offset+12+i+1][0] = d.ptrs[0].to_be_bytes()[i];
-	}
-	
-	for i in 2..=0 {
-		mmap[INS+offset+14+i..INS+offset+14+i+1][0] = d.ptrs[1].to_be_bytes()[i];
+		mmap.push(d.refs.to_be_bytes()[i] as i8);
 	}
 	
 	for i in 3..=0 {
-		mmap[INS+offset+16+i..INS+offset+16+i+1][0] = d.iptr.to_be_bytes()[i];
+		mmap.push(d.mode.to_be_bytes()[i] as i8);
+	}
+	
+	for i in 2..=0 {
+		mmap.push(d.size[0].to_be_bytes()[i] as i8);
+	}
+	
+	for i in 2..=0 {
+		mmap.push(d.size[1].to_be_bytes()[i] as i8);
+	}
+	
+	for i in 2..=0 {
+		mmap.push(d.ptrs[0].to_be_bytes()[i] as i8);
+	}
+	
+	for i in 2..=0 {
+		mmap.push(d.ptrs[1].to_be_bytes()[i] as i8);
 	}
 	
 	for i in 3..=0 {
-		mmap[INS+offset+20+i..INS+offset+20+i+1][0] = d.inum.to_be_bytes()[i];
+		mmap.push(d.iptr.to_be_bytes()[i] as i8);
+	}
+	
+	for i in 3..=0 {
+		mmap.push(d.inum.to_be_bytes()[i] as i8);
 	}
 	
 	return d.inum;

@@ -29,7 +29,7 @@ pub fn tree_lookup(mmap: &[i8],path: [char; DIR_NAME]) -> (i32, i32) {
 		cpath.pop();
 
 		let data = &mmap;
-		let n = inode::inode_deserialize(data, l);
+		let n = inode::inode_deserialize(data);
 	
 		let data = &mmap;
 		let mut buf: [i8; 52] = [42; 52];
@@ -118,7 +118,13 @@ pub fn dirent_serialize(ent: &Dirent) -> Vec<i8> {
 	let l = ret.1;
 	// TODO: Based on return value place new node, or alloc an inode and place it
 	if rv == -2 {
-		
+		l = inode::inode_find(path, mmap);
+	}
+	
+	unsafe {
+		let ptr = disk::read_d(24, (24*l)+(2*4096));
+		let slice = slice::from_raw_parts(ptr, 24);
+		let mut n = inode::inode_deserialize(slice);
 	}
 }*/
 
